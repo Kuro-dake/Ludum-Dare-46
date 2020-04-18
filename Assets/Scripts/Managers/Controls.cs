@@ -22,7 +22,10 @@ public class Controls : MonoBehaviour
     void Update()
     {
         Character cchar = GM.game.current_round_character;
-        GM.party.Face(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+        if (Camera.main != null)
+        {
+            GM.party.Face(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+        }
         
         /// mouse scroll controls
         if (Input.mouseScrollDelta.y > 0f) {  }

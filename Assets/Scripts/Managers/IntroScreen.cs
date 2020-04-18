@@ -126,9 +126,7 @@ public class IntroScreen : MonoBehaviour
         {
             game_children.Add(game.transform.GetChild(i));
         }
-        game_children.ForEach(delegate (Transform t) { t.SetParent(null); });
-        Destroy(gameObject);
-        Destroy(game.gameObject);
+        
         gm.Initialize();
     }
 }

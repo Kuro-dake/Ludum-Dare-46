@@ -58,8 +58,11 @@ public class Scenery : MonoBehaviour
         }
     }
     Dictionary<int, string> xtags = new Dictionary<int, string>();
-
-    void CheckXTags()
+    public void DeleteSkippedXtags()
+    {
+        CheckXTags(true);
+    }
+    void CheckXTags(bool delete_only = false)
     {
         int from = Mathf.FloorToInt(last_x);
         int to = Mathf.FloorToInt(x);
@@ -73,7 +76,10 @@ public class Scenery : MonoBehaviour
         {
             if (xtags.ContainsKey(i))
             {
-                StartCoroutine(PlayXTag(xtags[i]));
+                if (!delete_only)
+                {
+                    StartCoroutine(PlayXTag(xtags[i]));
+                }
                 xtags.Remove(i);
             }
             

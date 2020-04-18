@@ -45,7 +45,6 @@ public class Members : MonoBehaviour
     {
         foreach(Character c in gameObject.GetComponentsInChildren<Character>())
         {
-            Debug.Log("initialized " + c.name);
             c.party = party;
             c.GoToPosition();
             c.Initialize();

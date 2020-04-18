@@ -37,44 +37,52 @@ public class GM : MonoBehaviour
 
     static Dictionary<string, Component> scripts = new Dictionary<string, Component>();
 
-    public static T GetScript<T>(string name) where T : Component
+   
+    [SerializeField]
+    LevelManager _level_manager = null;
+    public static LevelManager level_manager { get { return _inst._level_manager; } }
+    [SerializeField]
+    CharacterManager _characters = null;
+    public static CharacterManager characters { get { return _inst._characters; } }
+    [SerializeField]
+    Text _devout = null;
+    public static Text devout { get { return _inst._devout; } }
+    [SerializeField]
+    Text _devoutright = null;
+    public static Text devoutright { get { return _inst._devoutright; } }
+    [SerializeField]
+    UIControls _ui = null;
+    public static UIControls ui { get { return _inst._ui; } }
+    public static bool devout_visible
     {
-
-        string script_key = name + typeof(T).ToString();
-        if (!scripts.ContainsKey(script_key))
-        {
-            T ret = inst[name].GetComponent<T>();
-            if (ret == null)
-            {
-                throw new UnityException("script " + script_key + " not found");
-            }
-            scripts.Add(script_key, ret);
-        }
-        return scripts[script_key] as T;
-    }
-
-    public static LevelManager level_manager { get { return GetScript<LevelManager>("LevelManager"); } }
-    public static CharacterManager characters { get { return GetScript<CharacterManager>("CharacterManager"); } }
-    public static Text devout { get { return GetScript<Text>("DevOut"); } }
-    public static Text devoutright { get { return GetScript<Text>("DevOutRight"); } }
-    public static UIControls ui { get { return GetScript<UIControls>("UI"); } }
-    public static bool devout_visible {
         set
         {
             devout.GetComponentInParent<Canvas>().enabled = value;
         }
     }
-    public static EffectsIndex effects { get { return GetScript<EffectsIndex>("EffectsIndex"); } }
-    public static GameManager game { get { return GetScript<GameManager>("GameManager"); } }
-    public static Controls controls { get { return GetScript<Controls>("Controls"); } }
-    public static DialogueManager cinema { get { return GetScript<DialogueManager>("DialogueManagerCamera"); } }
-    public static AudioManager audio_manager { get { return GetScript<AudioManager>("AudioManager"); } }
+    [SerializeField]
+    EffectsIndex _effects = null;
+    public static EffectsIndex effects { get { return _inst._effects; } }
+    [SerializeField]
+    GameManager _game = null;
+    public static GameManager game { get { return _inst._game; } }
+    [SerializeField]
+    Controls _controls = null;
+    public static Controls controls { get { return _inst._controls; } }
+    [SerializeField]
+    DialogueManager _cinema = null;
+    public static DialogueManager cinema { get { return _inst._cinema; } }
+    [SerializeField]
+    AudioManager _audio_manager = null;
+    public static AudioManager audio_manager { get { return _inst._audio_manager; } }
     public static Scenery scenery { get { return game.current_scenery; } }
     
     [SerializeField]
     PlayerParty _party = null;
     public static PlayerParty party { get { return inst._party; } }
-    public static CineCam cine_cam { get { return GetScript<CineCam>("CM vcam1"); } }
+    [SerializeField]
+    CineCam _cine_cam;
+    public static CineCam cine_cam { get { return _inst._cine_cam; } }
     [SerializeField]
     Sprite _square = null, _circle = null;
     public static Sprite square { get { return inst._square; } }
@@ -86,8 +94,6 @@ public class GM : MonoBehaviour
     {
         _inst = GameObject.Find("GM").GetComponent<GM>();
         game.LoadLevelParams(1);
-      
-        game.LoadLevel(1);
         
         
         dev_options.Init();

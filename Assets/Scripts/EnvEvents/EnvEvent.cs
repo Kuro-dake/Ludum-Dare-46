@@ -5,6 +5,10 @@ using UnityEngine;
 public abstract class EnvEvent : MonoBehaviour
 {
     bool activated = false;
+    public void ForceActivated()
+    {
+        activated = true;
+    }
     protected virtual void Update()
     {
         if (activated)

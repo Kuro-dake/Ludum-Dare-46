@@ -7,7 +7,7 @@ public class Party : MonoBehaviour
     protected bool moving = false;
 
     public Character[] characters;
-    protected bool orientation_right { get { return Camera.main.ScreenToWorldPoint(Input.mousePosition).x > transform.position.x; } }
+    protected bool orientation_right { get { return Camera.main == null ? false : Camera.main.ScreenToWorldPoint(Input.mousePosition).x > transform.position.x; } }
 
     public float GetPositionVector(int v)
     {

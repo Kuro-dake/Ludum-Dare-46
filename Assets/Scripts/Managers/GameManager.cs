@@ -120,58 +120,7 @@ public class GameManager : MonoBehaviour
 
     }
     Dictionary<string, Queue<EnemyCluster>> cluster_queues = new Dictionary<string, Queue<EnemyCluster>>();
-    public void LoadLevel(int level)
-    {
-        YamlMappingNode level_node = Setup.GetFile("level" + level.ToString());
-        foreach (KeyValuePair<YamlNode, YamlNode> queue in level_node.GetNode<YamlMappingNode>("cluster_queues").Children)
-        {
-            string queue_name = queue.Key.ToString();
-            Queue<EnemyCluster> qbc = new Queue<EnemyCluster>();
-            
-            YamlSequenceNode ymn = (YamlSequenceNode)queue.Value;
-            foreach (YamlMappingNode mn in ymn)
-            {
-                if(mn.Get("type") == "stop")
-                {
-                    break;
-                }
-                EnemyCluster cluster = Instantiate(GM.characters.clusters[mn.Get("type")]);
-                cluster.LoadParameters(mn);
-                qbc.Enqueue(cluster);
-            }
-            
-            cluster_queues.Add(queue_name, qbc);
-
-            
-
-
-        }
-       
-    }
-    Coroutine play_cluster_routine;
-    public void PlayCluster(string cluster_name)
-    {
-        play_cluster_routine = StartCoroutine(PlayClusterStep(cluster_name));
-    }
-    public EnemyCluster current_cluster_queue;
-    IEnumerator PlayClusterStep(string cluster_name)
-    {
-        Queue<EnemyCluster> play = new Queue<EnemyCluster>(cluster_queues[cluster_name]);
-
-        while(play.Count > 0)
-        {
-            current_cluster_queue = play.Dequeue();
-            current_cluster_queue.Spawn();
-            while (current_cluster_queue.active)
-            {
-                yield return null;
-            }
-            Destroy(current_cluster_queue);
-            
-        }
-        current_cluster_queue = null;
-    }
-
+   
     public YAMLParams level_gen_params;
 
     [SerializeField]
@@ -257,12 +206,7 @@ public class GameManager : MonoBehaviour
             c.ClearBuffs();
         });
     }
-    SavedPosition checkpoint;
-    public void SaveData()
-    {
-        checkpoint = new SavedPosition();
-        checkpoint.Save();
-    }
+    
 }
 
 public enum game_phase
@@ -270,40 +214,4 @@ public enum game_phase
     player_turn,
     enemy_turn,
     movement
-}
-
-[System.Serializable]
-public class SavedPosition
-{
-    public float x;
-    public List<SavedCharacter> characters = new List<SavedCharacter>();
-
-    public void Save()
-    {
-        x = GM.scenery.x;
-        foreach(Character c in GM.party.members.members)
-        {
-            characters.Add(new SavedCharacter(c));
-        }
-    }
-
-}
-[System.Serializable]
-public class SavedCharacter
-{
-    public int hp;
-    public int max_hp;
-    public int ap;
-    public int max_ap;
-    public int position;
-    public int defense;
-    public string name;
-    public int initiative;
-    public List<Ability> abilities = new List<Ability>();
-
-    public SavedCharacter(Character c)
-    {
-        c.WriteSaveData(this);
-    }
-
 }

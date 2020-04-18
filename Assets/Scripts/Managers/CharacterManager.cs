@@ -121,20 +121,6 @@ public class CharacterManager : MonoBehaviour
         
     }
    
-    private void Update()
-    {
-        if (DevOptions.Key(KeyCode.Q))
-        {
-            current_round_character_index++;
-            Debug.Log(current_round_character_index);
-        }
-        if (DevOptions.Key(KeyCode.W))
-        {
-            current_round_character_index--;
-            Debug.Log(current_round_character_index);
-        }
-    }
-
     public void KillAll()
     {
         all_characters.ForEach(delegate (Character obj)
@@ -174,11 +160,12 @@ public class CharacterManager : MonoBehaviour
     }
     [TextArea(10,15)]
     public string randomCombinations;
+    public int current_x = 300;
+    public int end_x = 5500;
+    public IntRange gaps = new IntRange(50, 150);
     void doRandomCombinations()
     {
-        int current_x = 300;
-        int end_x = 5500;
-        IntRange gaps = new IntRange(400, 600);
+        
         string[] possible_units = new string[] { "goblin1", "goblin2" };
         randomCombinations = "";
         bool first = true;
@@ -206,7 +193,7 @@ public class CharacterManager : MonoBehaviour
     {
         doRandomCombinations();
         current_round_character_index = 5;
-        Debug.Log(current_round_character_index);
+
     }
 
     public void NewTurn()

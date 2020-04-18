@@ -286,15 +286,15 @@ public abstract class Character : MonoBehaviour
 
     internal void WriteSaveData(SavedCharacter savedCharacter)
     {
-        hp = savedCharacter.hp;
-        max_hp = savedCharacter.max_hp;
-        ap = savedCharacter.ap;
-        _max_ap = savedCharacter.max_ap;
-        position = savedCharacter.position;
-        _defense = savedCharacter.defense;
-        
-        initiative = savedCharacter.initiative;
-        abilities = new List<Ability>(savedCharacter.abilities);
+        savedCharacter.hp = hp;
+        savedCharacter.max_hp = max_hp;
+        savedCharacter.ap = ap;
+        savedCharacter.max_ap = max_ap;
+        savedCharacter.position = position;
+        savedCharacter.defense = defense;
+        savedCharacter.name = name;
+        savedCharacter.initiative = initiative;
+        savedCharacter.abilities = new List<Ability>(abilities);
     }
 
     public void LoadSavedData(SavedCharacter savedCharacter)

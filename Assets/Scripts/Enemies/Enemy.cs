@@ -6,18 +6,6 @@ using UnityEngine;
 public class Enemy : Character
 {
 
-    public override void Interact(Character c)
-    {
-        if(c is PlayerCharacter)
-        {
-            c.Hit(1);
-            SpendAP();
-        }
-        else
-        {
-            SpendAP(ap);
-        }
-    }
     public override void Hit(int damage)
     {
         
@@ -39,6 +27,10 @@ public class Enemy : Character
     }
     public override void StartTurn()
     {
+        PrepareRandomAction();
+    }
+    public void PrepareRandomAction()
+    {
         use_this_round = GetRandomAvailableAbility();
         targets = use_this_round == null ? new List<int>() : use_this_round.GetTargetsForAI();
     }
@@ -54,7 +46,13 @@ public class Enemy : Character
         while (!has_finished_acting) {
             if (use_this_round == null)
             {
-                Debug.Log(name + " didn't have any ability it could use");
+                Debug.Log(name + " didn't have any ability it could use. Trying to refresh.");
+                PrepareRandomAction();
+                
+            }
+            if (use_this_round == null)
+            {
+                Debug.Log(name + " still no action, spending APs.");
                 SpendAP(ap);
             }
             else
@@ -66,13 +64,10 @@ public class Enemy : Character
                     
                 }
             }
-            while (!Input.GetKeyDown(KeyCode.Z))
-            {
-                yield return null;
-            }
+            
             has_finished_acting = true;
             yield return null;
-            Debug.Log("has actions left");
+            yield return new WaitForSeconds(1f);
         }
         
         Debug.Log(name + " finishing round");

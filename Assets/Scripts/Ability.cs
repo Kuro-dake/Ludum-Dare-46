@@ -56,7 +56,7 @@ public class Ability
         if(special_action != null)
         {
             special_action();
-            owner.SpendAP();
+            owner.has_finished_acting = true;
             return;
         }
         foreach(int position in targets)

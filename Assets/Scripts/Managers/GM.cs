@@ -78,8 +78,6 @@ public class GM : MonoBehaviour
     [SerializeField]
     PlayerParty _party = null;
     public static PlayerParty party { get { return inst._party; } }
-    [SerializeField] EnemyParty _enemy_party;
-    public static EnemyParty enemy_party { get { return inst._enemy_party; } }
     public static CineCam cine_cam { get { return GetScript<CineCam>("CM vcam1"); } }
     [SerializeField]
     Sprite _square = null, _circle = null;
@@ -106,7 +104,7 @@ public class GM : MonoBehaviour
         game.current_scenery.Initialize();
         //cinema.PlayLevelString(0); 
         characters.Initialize();
-        game.StartCombat(_enemy_party);
+        //game.StartCombat(_enemy_party);
     }
 
     

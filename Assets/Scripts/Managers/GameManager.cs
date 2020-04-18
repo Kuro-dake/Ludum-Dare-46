@@ -47,7 +47,11 @@ public class GameManager : MonoBehaviour
             );
 
         GM.devoutright.text = "";
-        foreach(KeyValuePair<int, Character> kv in GM.enemy_party.member_positions.members_positions)
+        if(GM.game.current_enemy_party == null)
+        {
+            return;
+        }
+        foreach(KeyValuePair<int, Character> kv in GM.game.current_enemy_party.member_positions.members_positions)
         {
             Character c = kv.Value;
             GM.devoutright.text += " <color=#" + ColorUtility.ToHtmlStringRGB(c.GetComponent<SpriteRenderer>().color) + ">" + c.hp + "</color>";
@@ -200,12 +204,12 @@ public class GameManager : MonoBehaviour
     }
 
     Coroutine combat_routine = null;
-    EnemyParty current_enemy_party;
+    public EnemyParty current_enemy_party;
     public void StartCombat(EnemyParty party)
     {
         current_enemy_party = party;
         current_enemy_party.Initialize();
-        Debug.Log("enemy party was initialized");
+        
         if(combat_routine != null)
         {
             return;
@@ -247,6 +251,7 @@ public class GameManager : MonoBehaviour
         }
         combat_routine = null;
         GM.cine_cam.target = GM.party.aim;
+        Destroy(current_enemy_party);
     }
 }
 

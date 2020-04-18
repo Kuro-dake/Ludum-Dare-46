@@ -16,7 +16,7 @@ public class Controls : MonoBehaviour
         {KeyCode.A, direction.left }
     };
     public float interact_radius = 40f;
-    public Character character_clicked = null;
+    
     internal Character character_hover = null;
 
     void Update()
@@ -31,13 +31,6 @@ public class Controls : MonoBehaviour
         GM.cine_cam.screenX = .5f;
         GM.cine_cam.screenY = .5f;
         
-        if(GM.game.phase == game_phase.player_turn)
-        {
-            if(character_clicked != null) {
-                cchar.Interact(character_clicked);
-                
-            }
-        }
         if (GM.game.phase == game_phase.movement)
         {
             foreach (KeyValuePair<KeyCode, direction> kv in keycode_dir)
@@ -50,7 +43,6 @@ public class Controls : MonoBehaviour
             }
         }
 
-        character_clicked = null;
         character_hover = null;
     }
 

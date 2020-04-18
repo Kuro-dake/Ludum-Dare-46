@@ -17,9 +17,9 @@ public class CineCam : MonoBehaviour
     {
         screenX = frame.m_ScreenX;
         screenY = frame.m_ScreenY;
-        ZoomTowards(modifier_range.random, delay_range);
+        //ZoomTowards(modifier_range.random, delay_range);
         MoveTowards(Random.insideUnitCircle * random_movement_multiplier, movement_delay_range);
-        StartCoroutine(RotateCam());
+        //StartCoroutine(RotateCam());
     }
     [SerializeField]
     float _ortographicSize = 40f;

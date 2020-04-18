@@ -6,7 +6,9 @@ using YamlDotNet.RepresentationModel;
 public class CharacterManager : MonoBehaviour
 {
     public NamedObjects named_enemies = new NamedObjects();
-    
+    [SerializeField]
+    List<EnemyData> enemy_data = new List<EnemyData>();
+
     #region Clusters
     [System.Serializable]
     public class ClusterTypes
@@ -22,6 +24,8 @@ public class CharacterManager : MonoBehaviour
     }
     public ClusterTypes clusters;
     #endregion
+    [SerializeField]
+    EnemyParty enemy_party_prefab = null;
 
     public List<Enemy> all_enemies
     {
@@ -41,7 +45,7 @@ public class CharacterManager : MonoBehaviour
     public int current_round_character_index { get { return _current_round_character_index; }
         set
         {
-            int character_num = all_characters.Count;
+            int character_num = alive_characters.Count;
             int val = value % character_num;
             val += val < 0 ? character_num : 0;
             _current_round_character_index = val;
@@ -90,7 +94,31 @@ public class CharacterManager : MonoBehaviour
     {
         _all_characters.Remove(c);
     }
-    
+    Enemy GetEnemy(string n)
+    {
+        return enemy_data.Find(delegate (EnemyData e)
+        {
+            return e.name == n;
+        }).enemy;
+    }
+    public void CreateEncounterFromString(string pars)
+    {
+        EnemyParty ep = Instantiate(enemy_party_prefab);
+        int i = 0;
+        foreach(string s in pars.Split(new char[] { ';' })){ 
+            Enemy e = Instantiate(GetEnemy(s));
+            e.position = i++;
+            e.transform.SetParent(ep.member_positions.transform);
+            e.transform.localPosition = Vector2.zero;
+
+        }
+        Vector2 eppos = Vector2.zero;
+        eppos.x = GM.party.transform.position.x + 30f;
+        eppos.y = GM.party.transform.position.y;
+        ep.transform.position = eppos;
+        GM.game.StartCombat(ep);
+        
+    }
    
     private void Update()
     {
@@ -135,7 +163,7 @@ public class CharacterManager : MonoBehaviour
 
     public List<Character> GetInitiativeOrderedCharacters()
     {
-        List<Character> chars = all_characters;
+        List<Character> chars = alive_characters;
         chars.Sort(delegate (Character a, Character b)
         {
            return b.initiative.CompareTo(a.initiative);
@@ -195,4 +223,11 @@ public class CharacterManager : MonoBehaviour
     }
 
     public Transform dev_turn_marker;
+}
+[System.Serializable]
+public class EnemyData
+{
+    public string name;
+    public Enemy enemy;
+    public int level;
 }

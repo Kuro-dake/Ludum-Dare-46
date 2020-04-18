@@ -34,7 +34,7 @@ public abstract class Character : MonoBehaviour
         get
         {
             if (party == GM.party) {
-                return GM.enemy_party;
+                return GM.game.current_enemy_party;
             }
             return GM.party;
         }
@@ -213,7 +213,7 @@ public abstract class Character : MonoBehaviour
         //has_finished_acting = true;
         return false;
     }
-    public abstract void Interact(Character c);
+    
     public void SwitchPositions(Character c)
     {
         if(c.party != party)

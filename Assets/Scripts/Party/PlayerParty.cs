@@ -42,6 +42,7 @@ public class PlayerParty : Party
         switch (d)
         {
             case direction.left:
+                Debug.Log("work left");
                 transform.position += Vector3.left * Time.deltaTime * movement_speed;
                 GM.cine_cam.screenX = orientation_right ? .65f : .95f;
 

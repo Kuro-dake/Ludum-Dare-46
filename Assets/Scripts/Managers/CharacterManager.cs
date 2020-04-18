@@ -5,6 +5,7 @@ using UnityEngine;
 using YamlDotNet.RepresentationModel;
 public class CharacterManager : MonoBehaviour
 {
+    
     public NamedObjects named_enemies = new NamedObjects();
     [SerializeField]
     List<EnemyData> enemy_data = new List<EnemyData>();
@@ -45,7 +46,7 @@ public class CharacterManager : MonoBehaviour
     public int current_round_character_index { get { return _current_round_character_index; }
         set
         {
-            int character_num = alive_characters.Count;
+            int character_num = all_characters.Count;
             int val = value % character_num;
             val += val < 0 ? character_num : 0;
             _current_round_character_index = val;
@@ -101,14 +102,14 @@ public class CharacterManager : MonoBehaviour
             return e.name == n;
         }).enemy;
     }
-    public void CreateEncounterFromString(string pars)
+    public Coroutine CreateEncounterFromString(string pars)
     {
         EnemyParty ep = Instantiate(enemy_party_prefab);
         int i = 0;
         foreach(string s in pars.Split(new char[] { ';' })){ 
             Enemy e = Instantiate(GetEnemy(s));
             e.position = i++;
-            e.transform.SetParent(ep.member_positions.transform);
+            e.transform.SetParent(ep.members.transform);
             e.transform.localPosition = Vector2.zero;
 
         }
@@ -116,7 +117,7 @@ public class CharacterManager : MonoBehaviour
         eppos.x = GM.party.transform.position.x + 30f;
         eppos.y = GM.party.transform.position.y;
         ep.transform.position = eppos;
-        GM.game.StartCombat(ep);
+        return GM.game.StartCombat(ep);
         
     }
    
@@ -163,7 +164,7 @@ public class CharacterManager : MonoBehaviour
 
     public List<Character> GetInitiativeOrderedCharacters()
     {
-        List<Character> chars = alive_characters;
+        List<Character> chars = all_characters;
         chars.Sort(delegate (Character a, Character b)
         {
            return b.initiative.CompareTo(a.initiative);
@@ -171,9 +172,39 @@ public class CharacterManager : MonoBehaviour
         
         return chars;
     }
+    [TextArea(10,15)]
+    public string randomCombinations;
+    void doRandomCombinations()
+    {
+        int current_x = 300;
+        int end_x = 5500;
+        IntRange gaps = new IntRange(400, 600);
+        string[] possible_units = new string[] { "goblin1", "goblin2" };
+        randomCombinations = "";
+        bool first = true;
+        while((current_x += gaps.random) < end_x)
+        {
+            if (first)
+            {
+                first = false;
+            }
+            else
+            {
+                randomCombinations += "\n";
+            }
+            int num = Random.Range(0, 2) == 1 ? Random.Range(2, 5) : 4;
+            randomCombinations += current_x.ToString() + "-encounter:";
+            for (int i = 0; i < num; i++)
+            {
+                randomCombinations += possible_units[Random.Range(0, possible_units.Length)] + (i < num-1 ? ";":"");
+            }
+        }
 
+
+    }
     public void Initialize()
     {
+        doRandomCombinations();
         current_round_character_index = 5;
         Debug.Log(current_round_character_index);
     }

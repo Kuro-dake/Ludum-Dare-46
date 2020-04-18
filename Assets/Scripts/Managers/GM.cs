@@ -13,10 +13,6 @@ public class GM : MonoBehaviour
     {
         get
         {
-            if (_inst == null)
-            {
-                _inst = GameObject.Find("GM").GetComponent<GM>();
-            }
             return _inst;
         }
     }
@@ -88,7 +84,7 @@ public class GM : MonoBehaviour
     public static DevOptions dev_options { get { return inst._dev_options; } }
     public void Initialize()
     {
-        
+        _inst = GameObject.Find("GM").GetComponent<GM>();
         game.LoadLevelParams(1);
       
         game.LoadLevel(1);
@@ -102,7 +98,7 @@ public class GM : MonoBehaviour
         party.Initialize();
         level_manager.GenerateLevel("World");
         game.current_scenery.Initialize();
-        //cinema.PlayLevelString(0); 
+        cinema.PlayLevelString(0); 
         characters.Initialize();
         //game.StartCombat(_enemy_party);
     }

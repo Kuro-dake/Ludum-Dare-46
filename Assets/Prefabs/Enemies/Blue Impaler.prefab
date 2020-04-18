@@ -123,6 +123,7 @@ MonoBehaviour:
   position: 0
   party: {fileID: 0}
   _hp: 3
+  max_hp: 12
   _defense: 0
   initiative: 3
   has_finished_acting: 0

@@ -52,7 +52,22 @@ public class LevelManager : MonoBehaviour
         go.transform.localRotation = Quaternion.Euler(Vector3.forward * type_data.euler_rotation);
         return go;
     }
+    public GameObject SpawnObject(string obj_name)
+    {
+        
+        GameObject go = Instantiate(Resources.Load("EnvItems/Global/" + obj_name) as GameObject);
+        Parallax p = go.GetComponent<Parallax>();
+        if (p == null)
+        {
+            p = go.AddComponent<Parallax>();
+            p.mode = parallax_mode.item;
+            p.offset = GM.scenery.x *-1 + 40f;
+        }
+        go.transform.localPosition = Vector3.zero;
+        go.transform.SetParent(GM.game.current_scenery.transform.Find("env_parallax"));
 
+        return go;
+    }
     public GameObject GetRandomPrefab(string environment, string type)
     {
         Object[] env_items = Resources.LoadAll(string.Format("EnvItems/{0}/{1}", environment, type), typeof(GameObject));

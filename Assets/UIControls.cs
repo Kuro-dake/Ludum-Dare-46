@@ -73,4 +73,9 @@ public class UIControls : MonoBehaviour
     {
         global_ability_buttons.DestroyChildren();
     }
+    public Character character_hover = null;
+    private void LateUpdate()
+    {
+        character_hover = null;
+    }
 }

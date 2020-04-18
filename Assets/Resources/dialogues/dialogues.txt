@@ -1,3 +1,3 @@
-none;l:Lorem ipsum...|actor1;l:Dolor sit ammet.|actor2;r:Consectetur elit|actor1;r:We switch|none;r:|none;l:they left
+wizard;l: Keep it alive. We're going to need it to close the rift it opened. |warrior;r: So now we're adopting hellspawn? |wizard;l: No. Tie it's claws behind it's back. It's a prisoner.
 --
-none;l:Lorem ipsum second...|actor1;l:Dolor sit ammet 2.|actor2;r:Consectetur elit
+

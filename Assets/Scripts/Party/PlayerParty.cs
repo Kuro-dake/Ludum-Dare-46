@@ -37,18 +37,18 @@ public class PlayerParty : Party
     float movement_speed = 10f;
     public void Movement(direction d)
     {
-        moving = true;
+        
         
         switch (d)
         {
-            case direction.left:
+            /*case direction.left:
                 Debug.Log("work left");
                 transform.position += Vector3.left * Time.deltaTime * movement_speed;
                 GM.cine_cam.screenX = orientation_right ? .65f : .95f;
 
-                break;
+                break;*/
             case direction.right:
-
+                moving = true;
                 transform.position += Vector3.right * Time.deltaTime * movement_speed;
                 GM.cine_cam.screenX = !orientation_right ? .35f : .05f;
                 
@@ -63,7 +63,7 @@ public class PlayerParty : Party
                 //transform.position += Vector3.down * Time.deltaTime * mspeed * .3f;
                 break;
         }
-        moving = true;
+        
         GM.scenery.Movement(transform.position.x);
         
     }
@@ -94,9 +94,9 @@ public class PlayerParty : Party
         
         for (int i = 0; i < starting_order.Length; i++)
         {
-            Character c = member_positions.transform.Find(starting_order[i]).GetComponent<Character>();
+            Character c = members.transform.Find(starting_order[i]).GetComponent<Character>();
             c.position = i;
-            c.Heal(15);
+            
         }
         base.Initialize();
 

@@ -43,12 +43,36 @@ public class DialogueManager : MonoBehaviour
 
     [TextArea(10, 15)]
     public List<string> level_intros = new List<string>();
-
+    [SerializeField]
+    bool dev_shutdown_instead = false;
     public void PlayLevelString(int string_num, string prefix = "", bool force_reload = false)
     {
+        if (dev_shutdown_instead)
+        {
+            active = false;
+            return;
+        }
         active = true;
         LoadLevelIntros(force_reload);
         PlayString(prefix + level_intros[string_num]);
+    }
+    
+    public Coroutine PlayDialogue(string d_name)
+    {
+        active = true;
+        // coroutine running through gamemanager, because dialogue manager object is disabled during inactivity
+        return GM.game.StartCoroutine(PlayDialogueStep(d_name));
+    }
+    IEnumerator PlayDialogueStep(string d_name)
+    {
+        
+        string dialogue = Resources.Load<TextAsset>("dialogues/" + d_name).text;
+        PlayString(dialogue);
+        while (active)
+        {
+            yield return null;
+        }
+        
     }
 
     public void LoadLevelIntros(bool force_reload = false)
@@ -76,7 +100,7 @@ public class DialogueManager : MonoBehaviour
            // GM.canvas.SetActive(!value);
         }
     }
-
+    
     public void Initialize()
     {
         GetComponentInChildren<Canvas>().enabled = true;
@@ -178,15 +202,8 @@ public class DialogueManager : MonoBehaviour
         ads.Stop();
     }
     Dictionary<string, string> names = new Dictionary<string, string>() {
-        { "butch", "Butcher" },
-        { "player", "Timmy" },
-        { "playergun", "armed Timmy" },
-        { "karol", "Karl" },
-        { "cutter", "A guy with a tiny knife" },
-        { "carrot", "Narrot" },
-        { "gogo", "The same fucking voice!!!" },
-        { "sfv", "Some fucking voice!" },
-        { "none", "A voice" }
+        
+        { "none", "" }
 
     };
     Coroutine talkwatch_routine;
@@ -272,7 +289,7 @@ public class DialogueManager : MonoBehaviour
 
 
         string textname = (current_actor != null ? current_actor.actor_name_display : ( names.ContainsKey(char_id) ? names[char_id] : char_id));
-        speech = "<b>" + textname + "</b>\n\n" + text; /* + ";fn:"+TextToFileName(text);*/
+        speech = (textname.Length > 0 ? "<b>" + textname + "</b>\n\n" : "" ) + text; /* + ";fn:"+TextToFileName(text);*/
 
         AudioClip clip = (AudioClip)Resources.Load("Audio/Speech/"+ TextToFileName(text));
         if (clip != null)

@@ -11,28 +11,28 @@ public class Party : MonoBehaviour
 
     public float GetPositionVector(int v)
     {
-        return member_positions.GetPositionVector(v);
+        return members.GetPositionVector(v);
     }
     [SerializeField]
-    MemberPositions _member_positions = null;
-    public MemberPositions member_positions { get { return _member_positions != null ? _member_positions : (_member_positions = gameObject.GetComponentInChildren<MemberPositions>()); } }
+    Members _members = null;
+    public Members members { get { return _members != null ? _members : (_members = gameObject.GetComponentInChildren<Members>()); } }
 
     public virtual void Initialize()
     {
-        member_positions.InitCharacters(this);
+        members.InitCharacters(this);
     }
 
     public Character this[string n]
     {
         get
         {
-            return member_positions.transform.Find(n).GetComponent<Character>();
+            return members.transform.Find(n).GetComponent<Character>();
         }
     }
     public Character this[int n]
     {
         get
-        { Dictionary<int, Character> mps = member_positions.members_positions;
+        { Dictionary<int, Character> mps = members.members_positions;
             if (!mps.ContainsKey(n))
             {
                 return null;

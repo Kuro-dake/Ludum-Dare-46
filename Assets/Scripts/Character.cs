@@ -42,6 +42,7 @@ public abstract class Character : MonoBehaviour
     [SerializeField]
     protected int _hp = 1;
     public int hp { get { return _hp; } protected set { _hp = value; } }
+    public int max_hp;
     [SerializeField]
     int _defense;
     public int defense { get { return _defense + GetBuffsValue(buff_type.defense); } }
@@ -52,7 +53,7 @@ public abstract class Character : MonoBehaviour
     public int initiative;
     public void Heal(int amount)
     {
-        hp += amount;
+        hp = Mathf.Clamp(hp+amount,0, max_hp);
     }
 
     public Coroutine GoToPosition(int pos = -1)
@@ -98,6 +99,7 @@ public abstract class Character : MonoBehaviour
     {
         GM.characters.AddCharacter(this);
         initialized = true;
+        hp = max_hp;
     }
 
     public void ApplyBuff(Buff b)
@@ -155,7 +157,7 @@ public abstract class Character : MonoBehaviour
         if (!alive)
         {
             GetComponent<SpriteRenderer>().color -= Color.black * .5f;
-            party.member_positions.OnCharacterDeath(this);
+            party.members.OnCharacterDeath(this);
         }
     }
 
@@ -189,7 +191,7 @@ public abstract class Character : MonoBehaviour
             return b.lasts <= 0;
         });
 
-        opposing_party.member_positions.RemoveDead();
+        opposing_party.members.RemoveDead();
         
     }
     public virtual void StartTurn() { }
@@ -239,7 +241,7 @@ public abstract class Character : MonoBehaviour
     }
     private void OnMouseOver()
     {
-        GM.controls.character_hover = this;
+        GM.ui.character_hover = this;
     }
     protected target_type GetTargetType(Character c)
     {
@@ -277,4 +279,34 @@ public abstract class Character : MonoBehaviour
         });
     }
 
+    internal void ClearBuffs()
+    {
+        buffs.Clear();
+    }
+
+    internal void WriteSaveData(SavedCharacter savedCharacter)
+    {
+        hp = savedCharacter.hp;
+        max_hp = savedCharacter.max_hp;
+        ap = savedCharacter.ap;
+        _max_ap = savedCharacter.max_ap;
+        position = savedCharacter.position;
+        _defense = savedCharacter.defense;
+        
+        initiative = savedCharacter.initiative;
+        abilities = new List<Ability>(savedCharacter.abilities);
+    }
+
+    public void LoadSavedData(SavedCharacter savedCharacter)
+    {
+        hp = savedCharacter.hp;
+        max_hp = savedCharacter.max_hp;
+        ap = savedCharacter.ap;
+        _max_ap = savedCharacter.max_ap;
+        position = savedCharacter.position;
+        _defense = savedCharacter.defense;
+        name = savedCharacter.name;
+        initiative = savedCharacter.initiative;
+        abilities = new List<Ability>(savedCharacter.abilities);
+    }
 }

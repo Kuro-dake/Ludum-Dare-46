@@ -14,6 +14,7 @@ public class Scenery : MonoBehaviour
 
     public void Initialize()
     {
+        LoadXTags();
         CheckActive();
         last_x = x;
     }
@@ -46,11 +47,17 @@ public class Scenery : MonoBehaviour
             
         }
     }
-
-    Dictionary<int, string> xtags = new Dictionary<int, string>() {
-        { -65, "encounter:goblin1;goblin1;goblin1;goblin1" },
-        { -100, "encounter:goblin2;goblin2;goblin2;goblin2"}
-    };
+    void LoadXTags()
+    {
+        xtags.Clear();
+        foreach(string s in Resources.Load<TextAsset>("xtags").text.Split(new char[] { '\n' }))
+        {
+            string[] p = s.Split(new char[] { '-' });
+            int x = int.Parse(p[0]) * -1;
+            xtags.Add(x, p[1]);
+        }
+    }
+    Dictionary<int, string> xtags = new Dictionary<int, string>();
 
     void CheckXTags()
     {
@@ -66,23 +73,36 @@ public class Scenery : MonoBehaviour
         {
             if (xtags.ContainsKey(i))
             {
-                PlayXTag(xtags[i]);
+                StartCoroutine(PlayXTag(xtags[i]));
                 xtags.Remove(i);
             }
             
         }
     }
 
-    void PlayXTag(string xtag)
+    IEnumerator PlayXTag(string xtag)
     {
-        string[] pars = xtag.Split(new char[] { ':' });
-        switch (pars[0])
+        string[] batch = xtag.Split(new char[] { '|' });
+        foreach (string xt in batch)
         {
-            case "encounter":
-                GM.characters.CreateEncounterFromString(pars[1]);
-                break;
+            Debug.Log(xt);
+            string[] pars = xt.Split(new char[] { ':' });
+            pars[1] = pars[1].Trim();
+            switch (pars[0])
+            {
+                case "encounter":
+                    yield return GM.characters.CreateEncounterFromString(pars[1]);
+                    break;
+                case "dialogue":
+                    yield return GM.cinema.PlayDialogue(pars[1]);
+                    break;
+                case "env":
+                    GM.level_manager.SpawnObject(pars[1]);
+                    break;
+            }
         }
-        
+
+        Debug.Log("Finished xtag");
     }
     
     void Update()

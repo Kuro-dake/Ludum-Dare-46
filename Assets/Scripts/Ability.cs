@@ -7,7 +7,7 @@ public class Ability
 {
     public Character owner;
     public string name;
-    public Sprite sprite;
+    public string sprite_name;
     public List<int> from_positions = new List<int>();
     public target_type target_type;
     [SerializeField]

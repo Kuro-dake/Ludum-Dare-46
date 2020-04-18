@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour
         {
             return;
         }
-        foreach(KeyValuePair<int, Character> kv in GM.game.current_enemy_party.member_positions.members_positions)
+        foreach(KeyValuePair<int, Character> kv in GM.game.current_enemy_party.members.members_positions)
         {
             Character c = kv.Value;
             GM.devoutright.text += " <color=#" + ColorUtility.ToHtmlStringRGB(c.GetComponent<SpriteRenderer>().color) + ">" + c.hp + "</color>";
@@ -65,9 +65,9 @@ public class GameManager : MonoBehaviour
         get
         {
             string ret = "\n";
-            if (GM.controls.character_hover != null)
+            if (GM.ui.character_hover != null)
             {
-                List<Ability> abilities = GM.game.current_round_character.GetAvailableAbilitiesFor(GM.controls.character_hover);
+                List<Ability> abilities = GM.game.current_round_character.GetAvailableAbilitiesFor(GM.ui.character_hover);
                 if (abilities.Count > 0)
                 {
                     foreach (Ability a in abilities)
@@ -205,18 +205,18 @@ public class GameManager : MonoBehaviour
 
     Coroutine combat_routine = null;
     public EnemyParty current_enemy_party;
-    public void StartCombat(EnemyParty party)
+    public Coroutine StartCombat(EnemyParty party)
     {
         current_enemy_party = party;
         current_enemy_party.Initialize();
         
         if(combat_routine != null)
         {
-            return;
+            throw new UnityException("Trying to start combat when a battle is already going on");
         }
         combat_camera_target.transform.position = Vector2.Lerp(GM.party.transform.position, current_enemy_party.transform.position, .5f);
         GM.cine_cam.target = combat_camera_target;
-        combat_routine = StartCoroutine(CombatStep());
+        return combat_routine = StartCoroutine(CombatStep());
     }
     Coroutine acting_routine = null;
     public bool is_acting { get { return acting_routine != null; } }
@@ -251,7 +251,17 @@ public class GameManager : MonoBehaviour
         }
         combat_routine = null;
         GM.cine_cam.target = GM.party.aim;
-        Destroy(current_enemy_party);
+        Destroy(current_enemy_party.gameObject);
+        GM.party.members.members.ForEach(delegate (Character c)
+        {
+            c.ClearBuffs();
+        });
+    }
+    SavedPosition checkpoint;
+    public void SaveData()
+    {
+        checkpoint = new SavedPosition();
+        checkpoint.Save();
     }
 }
 
@@ -260,4 +270,40 @@ public enum game_phase
     player_turn,
     enemy_turn,
     movement
+}
+
+[System.Serializable]
+public class SavedPosition
+{
+    public float x;
+    public List<SavedCharacter> characters = new List<SavedCharacter>();
+
+    public void Save()
+    {
+        x = GM.scenery.x;
+        foreach(Character c in GM.party.members.members)
+        {
+            characters.Add(new SavedCharacter(c));
+        }
+    }
+
+}
+[System.Serializable]
+public class SavedCharacter
+{
+    public int hp;
+    public int max_hp;
+    public int ap;
+    public int max_ap;
+    public int position;
+    public int defense;
+    public string name;
+    public int initiative;
+    public List<Ability> abilities = new List<Ability>();
+
+    public SavedCharacter(Character c)
+    {
+        c.WriteSaveData(this);
+    }
+
 }

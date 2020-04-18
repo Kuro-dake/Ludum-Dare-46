@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MemberPositions : MonoBehaviour
+public class Members : MonoBehaviour
 {
     protected virtual float[] positions { get { return new float[] { 8.7f, 2.9f, -2.9f, -8.7f }; } }
     public List<Character> members

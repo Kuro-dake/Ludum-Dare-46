@@ -34,8 +34,19 @@ public class PlayerCharacter : Character
     }
     public override Coroutine StartRound()
     {
+        if(character_abilities.Count == 0)
+        {
+            Debug.Log(name + " skips the turn bacause he has no actions to perform.");
+            StartCoroutine(SkipTurnStep());
+        }
         GM.ui.ShowGlobalAbilityButtons(character_abilities);
         return base.StartRound();
+    }
+
+    IEnumerator SkipTurnStep()
+    {
+        yield return new WaitForSeconds(.5f);
+        has_finished_acting = true;
     }
     
     public override void EndRound()

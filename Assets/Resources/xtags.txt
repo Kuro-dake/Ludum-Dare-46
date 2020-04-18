@@ -1,0 +1,11 @@
+21-encounter:goblin1;goblin1;goblin2;goblin2
+41-env:checkpoint
+1320-encounter:goblin1;goblin1;goblin2
+1781-encounter:goblin2;goblin2;goblin1
+2223-encounter:goblin1;goblin1;goblin2;goblin2
+2732-encounter:goblin2;goblin1;goblin2;goblin1
+3265-encounter:goblin2;goblin2;goblin1
+3783-encounter:goblin1;goblin2;goblin2;goblin1
+4300-encounter:goblin2;goblin2
+4754-encounter:goblin1;goblin2;goblin2;goblin1
+5181-encounter:goblin1;goblin1;goblin1

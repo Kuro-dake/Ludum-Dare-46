@@ -17,7 +17,7 @@ public class Controls : MonoBehaviour
     };
     public float interact_radius = 40f;
     
-    internal Character character_hover = null;
+    
 
     void Update()
     {
@@ -29,7 +29,7 @@ public class Controls : MonoBehaviour
         else if (Input.mouseScrollDelta.y < 0f) {  }
 
         GM.cine_cam.screenX = .5f;
-        GM.cine_cam.screenY = .5f;
+        GM.cine_cam.screenY = .65f;
         
         if (GM.game.phase == game_phase.movement)
         {
@@ -43,7 +43,7 @@ public class Controls : MonoBehaviour
             }
         }
 
-        character_hover = null;
+        
     }
 
     

@@ -269,7 +269,7 @@ public class DialogueManager : MonoBehaviour
         }
         else
         {
-            if (right_actor != null && right_actor != current_actor || current_actor == null)
+            if (right_actor != null && (right_actor != current_actor || current_actor == null))
             {
                 right_actor.Goto(direction.right, true);
             }
@@ -289,7 +289,7 @@ public class DialogueManager : MonoBehaviour
 
 
         string textname = (current_actor != null ? current_actor.actor_name_display : ( names.ContainsKey(char_id) ? names[char_id] : char_id));
-        speech = (textname.Length > 0 ? "<b>" + textname + "</b>\n\n" : "" ) + text; /* + ";fn:"+TextToFileName(text);*/
+        speech = (textname.Length > 0 ? "<b>" + textname + "</b>\n\n" : "\n" ) + text; /* + ";fn:"+TextToFileName(text);*/
 
         AudioClip clip = (AudioClip)Resources.Load("Audio/Speech/"+ TextToFileName(text));
         if (clip != null)

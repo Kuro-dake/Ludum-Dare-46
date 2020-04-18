@@ -1,5 +1,40 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6480147505327632650
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6177635124824383735}
+  m_Layer: 5
+  m_Name: SequenceDisplay
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &6177635124824383735
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6480147505327632650}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7687375725960097129}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0}
 --- !u!1 &7687375724796160556
 GameObject:
   m_ObjectHideFlags: 0
@@ -69,6 +104,11 @@ MonoBehaviour:
   enemy_party_prefab: {fileID: 3392973203697562664, guid: c441bc79455ec7d44a94e1d36557abe5,
     type: 3}
   randomCombinations: 
+  current_x: 50
+  end_x: 5500
+  gaps:
+    first: 50
+    second: 150
   select_active_character: 0
   dev_turn_marker: {fileID: 7687375726042058437}
 --- !u!1 &7687375724852670317
@@ -1853,6 +1893,18 @@ MonoBehaviour:
     buff:
       effects: []
       lasts: 0
+  - owner: {fileID: 0}
+    name: Arrow1
+    sprite_name: 
+    from_positions: 00000000010000000200000003000000
+    target_type: 0
+    damage: 10
+    heal: 0
+    target_positions: 00000000010000000200000003000000
+    target_number: 1
+    buff:
+      effects: []
+      lasts: 0
   buffs: []
   position: 0
   party: {fileID: 0}
@@ -2083,9 +2135,6 @@ MonoBehaviour:
   current_scenery: {fileID: 7687375725291877143}
   combat_camera_target: {fileID: 7687375726023419718}
   current_enemy_party: {fileID: 0}
-  checkpoint:
-    x: 0
-    characters: []
 --- !u!1 &7687375725954833496
 GameObject:
   m_ObjectHideFlags: 0
@@ -2239,6 +2288,7 @@ RectTransform:
   - {fileID: 7687375726319886219}
   - {fileID: 7687375724852670318}
   - {fileID: 7687375724922931610}
+  - {fileID: 6177635124824383735}
   m_Father: {fileID: 7687375725326025207}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2321,8 +2371,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button_prefab: {fileID: 551394532997501496, guid: a74a3034941575442821e5779281a333,
     type: 3}
+  sequence_icon_prefab: {fileID: 8149928355551424855, guid: 927a672a6d9954646bb314e1b9732cc8,
+    type: 3}
   ability_buttons: {fileID: 7687375724852670318}
   global_ability_buttons: {fileID: 7687375724922931610}
+  sequence_display: {fileID: 6177635124824383735}
   character_hover: {fileID: 0}
 --- !u!1 &7687375725996629232
 GameObject:
@@ -2347,7 +2400,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7687375725996629232}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

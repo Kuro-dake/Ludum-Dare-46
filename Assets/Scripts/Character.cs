@@ -6,6 +6,9 @@ using UnityEngine;
 
 public abstract class Character : MonoBehaviour
 {
+
+    public Color color { get { return GetComponent<SpriteRenderer>().color; } }
+
     [SerializeField]
     List<Ability> abilities = new List<Ability>();
     protected List<Ability> character_abilities
@@ -56,7 +59,7 @@ public abstract class Character : MonoBehaviour
         hp = Mathf.Clamp(hp+amount,0, max_hp);
     }
 
-    public Coroutine GoToPosition(int pos = -1)
+    public virtual Coroutine GoToPosition(int pos = -1)
     {
         if(pos < -1 || pos > 3)
         {
@@ -227,17 +230,14 @@ public abstract class Character : MonoBehaviour
         GoToPosition(npos);
     }
 
-    private void OnMouseDown()
-    {
-        //GM.controls.character_clicked = this;
-    }
-    private void OnMouseEnter()
+    protected virtual void OnMouseEnter()
     {
         GM.ui.ShowAbilityButtons(this, GM.game.current_round_character.GetAvailableAbilitiesFor(this));
     }
     private void OnMouseExit()
     {
         GM.ui.HideAbilityButtons();
+        GM.characters.MarkTargets();
     }
     private void OnMouseOver()
     {

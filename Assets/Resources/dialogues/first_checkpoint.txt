@@ -1,0 +1,1 @@
+wizard;l:We'll stop here to rest, and rethink our strategy.|none;:Camps serve as a checkpoints. If you lose in battle, this is the point from which you can resume your efforts.

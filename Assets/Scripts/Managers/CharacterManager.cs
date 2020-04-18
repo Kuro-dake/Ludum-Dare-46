@@ -5,7 +5,29 @@ using UnityEngine;
 using YamlDotNet.RepresentationModel;
 public class CharacterManager : MonoBehaviour
 {
-    
+    List<GameObject> target_marks = new List<GameObject>();
+    public void MarkTargets(List<Character> targets = null)
+    {
+        target_marks.ForEach(delegate (GameObject go) { Destroy(go); });
+        target_marks.Clear();
+        if (targets == null)
+        {
+            return;
+        }
+        foreach(Character target in targets)
+        {
+            GameObject mark = new GameObject("mark");
+            SpriteRenderer sr = mark.AddComponent<SpriteRenderer>();
+            sr.sprite = GM.circle;
+            sr.color = Color.magenta;
+            mark.transform.SetParent(target.transform);
+            mark.transform.localPosition = Vector2.up * 10f / target.transform.lossyScale.y;
+            
+            target_marks.Add(mark);
+
+        }
+    }
+
     public NamedObjects named_enemies = new NamedObjects();
     [SerializeField]
     List<EnemyData> enemy_data = new List<EnemyData>();
@@ -27,7 +49,23 @@ public class CharacterManager : MonoBehaviour
     #endregion
     [SerializeField]
     EnemyParty enemy_party_prefab = null;
-
+    public void SetCurrentCharacter(Character c) {
+        if(GM.game.phase != game_phase.movement)
+        {
+            return;
+        }
+        List<Character> ioc = GetInitiativeOrderedCharacters();
+        for(int i = 0; i < ioc.Count; i++)
+        {
+            if(ioc[i] == c)
+            {
+                _current_round_character_index = i;
+                RefreshCurrentCharacterMarker();
+                return;
+            }
+        }
+        
+    }
     public List<Enemy> all_enemies
     {
         get
@@ -117,6 +155,7 @@ public class CharacterManager : MonoBehaviour
         eppos.x = GM.party.transform.position.x + 30f;
         eppos.y = GM.party.transform.position.y;
         ep.transform.position = eppos;
+        ep.transform.SetParent(GameContainer.game_inst.transform);
         return GM.game.StartCombat(ep);
         
     }
@@ -209,6 +248,7 @@ public class CharacterManager : MonoBehaviour
         if (first)
         {
             current_round_character_index = 0;
+            NewTurn();
         }
         else
         {
@@ -232,12 +272,41 @@ public class CharacterManager : MonoBehaviour
             UnityEditor.Selection.activeGameObject = current_round_character.gameObject;
         }
         Debug.Log(current_round_character.name + " is starting his round with an initiative of " + current_round_character.initiative);
-        
-        dev_turn_marker.SetParent(current_round_character.transform);
-        dev_turn_marker.localPosition = Vector3.up * 1.5f;
 
+        RefreshCurrentCharacterMarker();
+        GM.ui.ShowSequence();
         return current_round_character.StartRound();
 
+    }
+
+    private void RefreshCurrentCharacterMarker()
+    {
+        dev_turn_marker.SetParent(current_round_character.transform);
+        dev_turn_marker.localPosition = Vector3.up * 1.5f;
+    }
+
+    public List<Character> GetNextTurnSequence()
+    {
+        List<Character> ioc = GetInitiativeOrderedCharacters();
+        
+        List<Character> ret = new List<Character>();
+        for(int i = current_round_character_index; i < ioc.Count; i++)
+        {
+            if (!ioc[i].alive)
+            {
+                continue;
+            }
+            ret.Add(ioc[i]);
+        }
+        for (int i = 0; i < current_round_character_index; i++)
+        {
+            if (!ioc[i].alive)
+            {
+                continue;
+            }
+            ret.Add(ioc[i]);
+        }
+        return ret;
     }
 
     public Transform dev_turn_marker;

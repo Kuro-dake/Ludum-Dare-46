@@ -129,6 +129,31 @@ public class Ability
 
         return ret;
     }
+
+    public List<Character> TargetCharacters(List<int> poss = null)
+    {
+        if(poss == null)
+        {
+            poss = target_positions;
+        }
+        switch (target_type)
+        {
+            case target_type.self:
+                return new List<Character>() { owner };
+                
+            case target_type.ally:
+                return poss.ConvertAll<Character>(delegate (int pos) {
+                    return owner.party.members.members_positions[pos];
+                });
+                
+            case target_type.enemy:
+                return poss.ConvertAll<Character>(delegate (int pos) {
+                    return owner.opposing_party.members.members_positions[pos];
+                });
+                
+        }
+        return new List<Character>();
+    }
 }
 [System.Serializable]
 public class NamedBuffEffect : Pair<buff_type, int>

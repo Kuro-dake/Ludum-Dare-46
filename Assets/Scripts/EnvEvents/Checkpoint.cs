@@ -6,6 +6,7 @@ public class Checkpoint : EnvEvent
 {
     protected override void PlayEvent()
     {
+        base.PlayEvent();
         GameContainer.SaveData();
     }
 }

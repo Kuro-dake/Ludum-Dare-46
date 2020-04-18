@@ -6,11 +6,11 @@ public class UIControls : MonoBehaviour
 {
     [SerializeField]
     Button button_prefab = null;
+    [SerializeField]
+    Image sequence_icon_prefab = null;
     Canvas canvas { get { return GetComponent<Canvas>(); } }
     [SerializeField]
-    Transform ability_buttons;
-    [SerializeField]
-    Transform global_ability_buttons;
+    Transform ability_buttons, global_ability_buttons, sequence_display;
     Vector2 GetCharacterCanvasPosition(Character target)
     {
         Vector2 offsetPos = target.transform.position + Vector3.up * 1.5f;
@@ -38,6 +38,7 @@ public class UIControls : MonoBehaviour
                 a.ApplyAbility(target);
                 HideAbilityButtons();
             });
+            b.gameObject.AddComponent<SkillButtonHover>().ability = a;
         }
     }
 
@@ -62,9 +63,29 @@ public class UIControls : MonoBehaviour
                 a.ApplyAbility();
                 HideAbilityButtons();
             });
+            b.gameObject.AddComponent<SkillButtonHover>().ability = a;
         }
     }
-
+    List<GameObject> sequence_icons = new List<GameObject>();
+    public void ShowSequence()
+    {
+        sequence_icons.ForEach(delegate (GameObject go) { Destroy(go); });
+        sequence_icons.Clear();
+        List<Character> nts = GM.characters.GetNextTurnSequence();
+        int i = 0;
+        float step = 40f;
+        float start = step * nts.Count * -.5f;
+        foreach (Character c in nts)
+        {
+            Image icon = Instantiate(sequence_icon_prefab);
+            icon.gameObject.AddComponent<SequenceIconHover>().character = c;
+            icon.transform.SetParent(sequence_display);
+            icon.gameObject.GetComponent<RectTransform>().localPosition = Vector2.right * (i++ * step + start) + Vector2.up * 25f;
+            
+            icon.color = c.color;
+            sequence_icons.Add(icon.gameObject);
+        }
+    }
     public void HideAbilityButtons()
     {
         ability_buttons.DestroyChildren();

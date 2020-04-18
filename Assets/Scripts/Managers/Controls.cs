@@ -21,6 +21,10 @@ public class Controls : MonoBehaviour
 
     void Update()
     {
+        if (GM.cinema.active)
+        {
+            return;
+        }
         Character cchar = GM.game.current_round_character;
         if (Camera.main != null)
         {

@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class EnvEvent : MonoBehaviour
 {
     bool activated = false;
+    public string dialogue = "";
     public void ForceActivated()
     {
         activated = true;
@@ -22,5 +23,11 @@ public abstract class EnvEvent : MonoBehaviour
         }
     }
 
-    protected abstract void PlayEvent();
+    protected virtual void PlayEvent()
+    {
+        if (dialogue.Length > 0)
+        {
+            GM.cinema.PlayDialogue(dialogue);
+        }
+    }
 }

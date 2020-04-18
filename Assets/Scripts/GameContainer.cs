@@ -6,9 +6,9 @@ public class GameContainer : MonoBehaviour
 {
     [SerializeField]
     GameObject game = null;
-    GameObject game_inst = null;
+    GameObject _game_inst = null;
     static GameContainer inst;
-    
+    public static GameObject game_inst { get { return inst._game_inst; } }
     SavedPosition checkpoint;
     GM gm { get { return GetComponentInChildren<GM>(); } }
     public static void SaveData()
@@ -30,7 +30,7 @@ public class GameContainer : MonoBehaviour
         {
             if(gm != null)
             {
-                game_inst = gm.transform.parent.gameObject;
+                _game_inst = gm.transform.parent.gameObject;
                 gm.Initialize();
             }
         }
@@ -49,14 +49,14 @@ public class GameContainer : MonoBehaviour
     }
     IEnumerator RebootStep()
     {
-        if(game_inst != null)
+        if(_game_inst != null)
         {
-            Destroy(game_inst);
+            Destroy(_game_inst);
         }
         yield return null;
         yield return null;
-        game_inst = Instantiate(game);
-        game_inst.transform.SetParent(transform);
+        _game_inst = Instantiate(game);
+        _game_inst.transform.SetParent(transform);
         int tick = init_state == -1 ? System.Environment.TickCount : init_state;
         Debug.Log(tick);
         Random.InitState(tick);

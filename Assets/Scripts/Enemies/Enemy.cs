@@ -5,7 +5,11 @@ using UnityEngine;
 
 public class Enemy : Character
 {
-
+    public override Coroutine GoToPosition(int pos = -1)
+    {
+        PrepareRandomAction(true);
+        return base.GoToPosition(pos);
+    }
     public override void Hit(int damage)
     {
         
@@ -28,11 +32,15 @@ public class Enemy : Character
     public override void StartTurn()
     {
         PrepareRandomAction();
+        
     }
-    public void PrepareRandomAction()
+    public void PrepareRandomAction(bool force = false)
     {
-        use_this_round = GetRandomAvailableAbility();
-        targets = use_this_round == null ? new List<int>() : use_this_round.GetTargetsForAI();
+        if (use_this_round == null || force)
+        {
+            use_this_round = GetRandomAvailableAbility();
+            targets = use_this_round == null ? new List<int>() : use_this_round.GetTargetsForAI();
+        }
     }
     public override Coroutine StartRound()
     {
@@ -63,6 +71,7 @@ public class Enemy : Character
                     use_this_round.ApplyAbility(c);
                     
                 }
+                PrepareRandomAction(true);
             }
             
             has_finished_acting = true;
@@ -73,6 +82,19 @@ public class Enemy : Character
         Debug.Log(name + " finishing round");
         
     }
+    protected override void OnMouseEnter()
+    {
+        base.OnMouseEnter();
+        DisplayNextTargets();
+        
+    }
 
+    public void DisplayNextTargets()
+    {
+        if (use_this_round != null)
+        {
+            GM.characters.MarkTargets(use_this_round.TargetCharacters(targets));
+        }
+    }
 }
 

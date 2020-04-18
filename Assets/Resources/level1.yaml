@@ -1,0 +1,26 @@
+base_settings:
+ seed: 451992500
+ complexity: 3
+ straight: 1,2
+ gen_probability: 80
+ gen_probability_decline: 0
+
+ # template for what sequential gameplay data input might look like
+cluster_queues:
+  ground:
+    - type: stop
+      value: 3
+      direction: up
+      number: 1,1
+    - type: directional
+      direction: up
+      number: 1,1
+    - type: corner
+      direction: left, up
+      number: 1,1
+    - type: corner
+      direction: right, up
+      number: 3,3
+    - type: dialogue
+      direction: right, up
+      number: 3,3

@@ -1,0 +1,14 @@
+grid_size: 7
+tile_width: 2.5
+tile_height: 2.6
+movement_speed: 12
+dying_fade_speed: 2
+shake_screen_duration: .1
+shake_screen_force: .2
+attack_speed: 25
+attack_distance: .5
+genie_tail_range: .03,.06
+genie_tail_dissipate_speed: .5
+genie_tail_scale_rate: 1.1
+genie_tail_rotation_multiplier: 30
+genie_speed: 18

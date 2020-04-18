@@ -9,7 +9,7 @@ public class CineCam : MonoBehaviour
     FloatRange movement_delay_range = new FloatRange(4f, 6f);
     FloatRange modifier_range = new FloatRange(0f, 5f);
     [SerializeField]
-    public Vector2 cam_offset { get { return GM.cine_cam.transform.position - GM.walker.transform.position; } }
+    public Vector2 cam_offset { get { return GM.cine_cam.transform.position - GM.party.transform.position; } }
     float random_movement_multiplier = .01f;
     public Transform target { set { cvcam.m_Follow = value; } }
     //FloatRange pos_mod_x_range = new FloatRange()

@@ -16,9 +16,12 @@ public class Controls : MonoBehaviour
         {KeyCode.A, direction.left }
     };
     public float interact_radius = 40f;
-    
+    public Character character_clicked = null;
     void Update()
     {
+        Character cchar = GM.game.current_round_character;
+        GM.party.Face(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+
         /// mouse scroll controls
         if (Input.mouseScrollDelta.y > 0f) {  }
         else if (Input.mouseScrollDelta.y < 0f) {  }
@@ -26,16 +29,26 @@ public class Controls : MonoBehaviour
         GM.cine_cam.screenX = .5f;
         GM.cine_cam.screenY = .5f;
         
-        foreach (KeyValuePair<KeyCode, direction> kv in keycode_dir)
+        if(GM.game.phase == game_phase.player_turn)
         {
-            
-            if (Input.GetKey(kv.Key))
-            {
-                InputControls(kv.Value);
+            if(character_clicked != null) {
+                cchar.Interact(character_clicked);
+                
             }
         }
-        
+        if (GM.game.phase == game_phase.movement)
+        {
+            foreach (KeyValuePair<KeyCode, direction> kv in keycode_dir)
+            {
 
+                if (Input.GetKey(kv.Key))
+                {
+                    InputControls(kv.Value);
+                }
+            }
+        }
+
+        character_clicked = null;
     }
 
     
@@ -47,7 +60,7 @@ public class Controls : MonoBehaviour
             }
             
 
-            GM.walker.Movement(d);
+            GM.party.Movement(d);
             
         
         

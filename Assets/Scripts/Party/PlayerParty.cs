@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Walker : PlayerCharacter
+public class PlayerParty : Party
 {
     
     // Update is called once per frame
@@ -14,27 +14,28 @@ public class Walker : PlayerCharacter
         {KeyCode.UpArrow, direction.up},
         {KeyCode.DownArrow, direction.down},
     };
-    
-    bool moving = false;
-    
+
+    public Transform aim;
+    public Transform aim_parent;
+
     Transform _static_anim;
     Transform _sa_parent;
     Transform sa_parent { get { return _sa_parent != null ? _sa_parent : (_sa_parent = transform.Find("sa_parent")); } }
-    bool orientation_right { get { return Camera.main.ScreenToWorldPoint(Input.mousePosition).x > transform.position.x; } }
     
     void Update()
     {
-        if(anim != null)
+        
+        /*if(anim != null)
         {
             anim.SetBool("moving", moving);
-        }
+        }*/
         
         moving = false;
 
     }
     [SerializeField]
     float movement_speed = 10f;
-    public override void Movement(direction d)
+    public void Movement(direction d)
     {
         moving = true;
         
@@ -66,13 +67,54 @@ public class Walker : PlayerCharacter
         
     }
 
-   
+    /// <summary>
+    /// initialization makes sure camera has something to follow for a fluid camera movement
+    /// </summary>
+    
     public override void Initialize()
     {
+        aim = new GameObject("aim").transform;
+
+        SpriteRenderer sr = aim.gameObject.AddComponent<SpriteRenderer>();
+        sr.sprite = GM.circle;
+        sr.color = Color.green;
+        sr.sortingLayerName = "UI";
+        aim.localScale *= 1f;
+
+        aim_parent = new GameObject("aim_parent").transform;
+        aim.SetParent(aim_parent);
+        aim.localPosition = Vector2.up * 7f;
+        
+        aim_parent.SetParent(transform);
+        aim_parent.localPosition = Vector2.zero;
+        GM.cine_cam.target = aim;
+
+        string[] starting_order = new string[] { "Warrior", "Ranger", "Gray", "Wizard" };
+        
+        for (int i = 0; i < starting_order.Length; i++)
+        {
+            Character c = member_positions.transform.Find(starting_order[i]).GetComponent<Character>();
+            c.position = i;
+
+        }
         base.Initialize();
-        GM.cine_cam.target = transform;
+
+
+
     }
+
     
+
+    public void Face(Vector2 mpos)
+    {
+        Vector2 ppos = transform.position;
+        Vector2 direction = mpos - ppos;
+        float target = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        aim_parent.rotation = Quaternion.Euler(Vector3.forward * (target - 90f));
+        
+        
+    }
+
     [SerializeField]
     float melee_range = 10f;
     [SerializeField]

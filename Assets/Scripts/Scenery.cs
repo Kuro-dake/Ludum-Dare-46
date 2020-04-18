@@ -12,7 +12,7 @@ public class Scenery : MonoBehaviour
 
     public void Initialize()
     {
-        
+        CheckActive();
     }
 
     public void Movement(float _x)

@@ -58,7 +58,7 @@ public class GM : MonoBehaviour
     }
 
     public static LevelManager level_manager { get { return GetScript<LevelManager>("LevelManager"); } }
-    public static EnemyManager enemies { get { return GetScript<EnemyManager>("EnemyManager"); } }
+    public static CharacterManager characters { get { return GetScript<CharacterManager>("CharacterManager"); } }
     public static Text devout { get { return GetScript<Text>("DevOut"); } }
     
     public static bool devout_visible {
@@ -75,8 +75,10 @@ public class GM : MonoBehaviour
     public static Scenery scenery { get { return game.current_scenery; } }
     
     [SerializeField]
-    Walker _walker = null;
-    public static Walker walker { get { return inst._walker; } }
+    PlayerParty _party = null;
+    public static PlayerParty party { get { return inst._party; } }
+    [SerializeField] EnemyParty _enemy_party;
+    public static EnemyParty enemy_party { get { return inst._enemy_party; } }
     public static CineCam cine_cam { get { return GetScript<CineCam>("CM vcam1"); } }
     [SerializeField]
     Sprite _square = null, _circle = null;
@@ -98,10 +100,12 @@ public class GM : MonoBehaviour
 
         /*terrace.Initialize();
         terrace.from.VisitNode();*/
-        walker.Initialize();
+        party.Initialize();
         level_manager.GenerateLevel("World");
         game.current_scenery.Initialize();
         //cinema.PlayLevelString(0); 
+        characters.Initialize();
+        game.StartCombat(_enemy_party);
     }
 
     

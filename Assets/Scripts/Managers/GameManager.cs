@@ -10,8 +10,24 @@ public class GameManager : MonoBehaviour
     {
         return sprites.Find(delegate (NamedSprite ns) { return ns.first == sprite_name; }).second;
     }
-    
-    
+
+    public game_phase phase {
+        get
+        {
+            if(GM.characters.alive_enemies.Count == 0)
+            {
+                return game_phase.movement;
+            }
+            else if(GM.characters.current_round_character is Enemy)
+            {
+                return game_phase.enemy_turn;
+            }
+            else
+            {
+                return game_phase.player_turn;
+            }
+        }
+    }
     
     public static bool pause { get { return Time.timeScale == 0f; } set { Time.timeScale = value ? 0f : 1f; } }
 
@@ -24,7 +40,10 @@ public class GameManager : MonoBehaviour
             GM.devout.text = "";
             return;
         }
-        GM.devout.text = "";
+        Party p = GM.party;
+        GM.devout.text = string.Format("<color=green>{0}</color> <color=blue>{1}</color> <color=red>{2}</color> <color=gray>{3}</color>", 
+            p["Ranger"].hp, p["Wizard"].hp, p["Warrior"].hp, p["Gray"].hp
+            );
     }
 
     public void Hit(Vector2 point, Vector2 from, bool blood)
@@ -77,7 +96,7 @@ public class GameManager : MonoBehaviour
                 {
                     break;
                 }
-                EnemyCluster cluster = Instantiate(GM.enemies.clusters[mn.Get("type")]);
+                EnemyCluster cluster = Instantiate(GM.characters.clusters[mn.Get("type")]);
                 cluster.LoadParameters(mn);
                 qbc.Enqueue(cluster);
             }
@@ -115,7 +134,16 @@ public class GameManager : MonoBehaviour
     }
 
     public YAMLParams level_gen_params;
-    
+
+    [SerializeField]
+    Transform combat_camera_target;
+    public Character current_round_character
+    {
+        get
+        {
+            return GM.characters.current_round_character;
+        }
+    }
 
     public class YAMLParams
     {
@@ -135,4 +163,61 @@ public class GameManager : MonoBehaviour
                 , seed, complexity, straight[0], straight[1], gen_probability, gen_probability_decline);
         }
     }
+
+    Coroutine combat_routine = null;
+    EnemyParty current_enemy_party;
+    public void StartCombat(EnemyParty party)
+    {
+        current_enemy_party = party;
+        current_enemy_party.Initialize();
+        Debug.Log("enemy party was initialized");
+        if(combat_routine != null)
+        {
+            return;
+        }
+        combat_camera_target.transform.position = Vector2.Lerp(GM.party.transform.position, current_enemy_party.transform.position, .5f);
+        GM.cine_cam.target = combat_camera_target;
+        combat_routine = StartCoroutine(CombatStep());
+    }
+    Coroutine acting_routine = null;
+    public bool is_acting { get { return acting_routine != null; } }
+    public void Acting(Coroutine c)
+    {
+        if(is_acting)
+        {
+            throw new UnityException("Tried to start acting before the old act was finished");
+        }
+        acting_routine = StartCoroutine(ActingStep(c));
+    }
+    IEnumerator ActingStep(Coroutine c)
+    {
+        yield return c;
+        Debug.Log("finished acting");
+        acting_routine = null;
+    }
+
+    IEnumerator CombatStep()
+    {
+        GM.characters.NewTurn();
+        GM.characters.NextCharacterTurn(true);
+        while (GM.characters.any_enemies_alive)
+        {
+            while (GM.characters.current_round_character.has_actions_left || is_acting)
+            {
+                yield return null;
+            }
+            GM.characters.NextCharacterTurn();
+            yield return null;
+
+        }
+        combat_routine = null;
+        GM.cine_cam.target = GM.party.aim;
+    }
+}
+
+public enum game_phase
+{
+    player_turn,
+    enemy_turn,
+    movement
 }

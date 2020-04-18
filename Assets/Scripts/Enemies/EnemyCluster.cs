@@ -89,7 +89,7 @@ public abstract class EnemyCluster : MonoBehaviour
     protected List<Enemy> cluster_enemies = new List<Enemy>();
     protected Enemy GenerateEnemy(string type, Vector2 pos)
     {
-        Enemy ret = GM.enemies.GenerateEnemy(type, pos);
+        Enemy ret = GM.characters.GenerateEnemy(type, pos);
         cluster_enemies.Add(ret);
         return ret;
     }

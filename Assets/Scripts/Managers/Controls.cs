@@ -17,11 +17,13 @@ public class Controls : MonoBehaviour
     };
     public float interact_radius = 40f;
     public Character character_clicked = null;
+    internal Character character_hover = null;
+
     void Update()
     {
         Character cchar = GM.game.current_round_character;
         GM.party.Face(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-
+        
         /// mouse scroll controls
         if (Input.mouseScrollDelta.y > 0f) {  }
         else if (Input.mouseScrollDelta.y < 0f) {  }
@@ -49,6 +51,7 @@ public class Controls : MonoBehaviour
         }
 
         character_clicked = null;
+        character_hover = null;
     }
 
     

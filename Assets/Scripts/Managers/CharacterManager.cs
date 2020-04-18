@@ -157,7 +157,8 @@ public class CharacterManager : MonoBehaviour
             c.StartTurn();
         });
     }
-    public void NextCharacterTurn(bool first = false)
+    public bool select_active_character = true;
+    public Coroutine NextCharacterTurn(bool first = false)
     {
         if (first)
         {
@@ -165,6 +166,7 @@ public class CharacterManager : MonoBehaviour
         }
         else
         {
+            current_round_character.EndRound();
             int prev_index = current_round_character_index++;
             if (prev_index > current_round_character_index)
             {
@@ -173,17 +175,23 @@ public class CharacterManager : MonoBehaviour
         }
         if (!any_enemies_alive)
         {
-            return;
+            return null;
         }
         if (!current_round_character.alive)
         {
-            NextCharacterTurn();
-            return;
+            return NextCharacterTurn(); 
         }
-        current_round_character.StartRound();
+        if (select_active_character)
+        {
+            UnityEditor.Selection.activeGameObject = current_round_character.gameObject;
+        }
+        Debug.Log(current_round_character.name + " is starting his round with an initiative of " + current_round_character.initiative);
+        
         dev_turn_marker.SetParent(current_round_character.transform);
         dev_turn_marker.localPosition = Vector3.up * 1.5f;
-        Debug.Log(current_round_character.name + " is starting his turn with an initiative of " + current_round_character.initiative);
+
+        return current_round_character.StartRound();
+
     }
 
     public Transform dev_turn_marker;

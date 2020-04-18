@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class Ability
 {
+    public Character owner;
     public string name;
     public Sprite sprite;
     public List<int> from_positions = new List<int>();
@@ -20,6 +21,13 @@ public class Ability
     public int target_number = 1;
     public Buff buff;
 
+    public Ability(System.Action a)
+    {
+        special_action = a;
+        damage = 0;
+        heal = 0;
+    }
+    System.Action special_action = null;
     public List<int> GetTargetsForAI()
     {
         List<int> ret = new List<int>(target_positions);
@@ -27,46 +35,99 @@ public class Ability
         return ret.GetRange(0, target_number);
             
     }
-
-    public void ApplyAbility(Character owner, List<int> targets)
+    public void ApplyAbility()
     {
+        if((target_type == target_type.enemy || target_type == target_type.ally) && target_number < 2)
+        {
+            throw new UnityException("Trying to apply an ability without a target");
+        }
+        Party target_party = owner.opposing_party;
+        if (target_type == target_type.ally)
+        {
+            target_party = owner.party;
+        }
+        foreach(int pos in target_positions)
+        {
+            ApplyAbility(target_party[pos]);
+        }
+    }
+    public void ApplyAbility(List<int> targets)
+    {
+        if(special_action != null)
+        {
+            special_action();
+            owner.SpendAP();
+            return;
+        }
         foreach(int position in targets)
         {
-            ApplyAbility(owner, owner.opposing_part[position]);
+            ApplyAbility(owner.opposing_party[position]);
         }
     }
 
-    public void ApplyAbility(Character owner, Character target)
+    public void ApplyAbility(Character target)
     {
-        if(target == null)
+        if (special_action != null)
         {
-            Debug.Log("No target provided for " + name + " ability");
+            special_action();
+            owner.SpendAP();
+            return;
+        }
+        string ret = "";
+        if (target == null)
+        {
+            ret += "No target provided for " + name + " ability\n";
             return;
         }
         if (!target.alive)
         {
-            Debug.Log("Target " + target.name + " is not alive");
+            ret += "Target " + target.name + " is not alive";
             return;
         }
 
-        Debug.Log("Applying " + name + " ability on " + target.name);
-        int dmg = damage > 0 ? damage + GetDamage(owner.buffs) : 0;
+        ret += "\nApplying " + name + " ability on " + target.name + "\n";
+        int dmg = damage > 0 ? GetDamage(owner.buffs) : 0;
         if (dmg > 0)
         {
-            Debug.Log("Dealt " + damage + " damage");
+            ret += "\nDealt " + damage + " damage\n";
             target.Hit(dmg);
         }
         int hpplus = heal;
-        if (hpplus > 0) {
-            Debug.Log("Healed " + hpplus + " hp");
+        if (hpplus > 0)
+        {
+            ret += "\nHealed " + hpplus + " hp\n";
             target.Heal(hpplus);
         }
         if (!buff.is_inert)
         {
             target.ApplyBuff(buff);
         }
+        Debug.Log(ret);
+        owner.SpendAP();
 
+    }
+    public override string ToString()
+    {
+        string ret = "";
+        ret += name + "\n";
+        int dmg = damage;
+        if (dmg > 0)
+        {
+            ret += "Deals " + damage + " damage\n";
 
+        }
+        int hpplus = heal;
+        if (hpplus > 0)
+        {
+            ret += "Heals " + hpplus + " hp\n";
+
+        }
+        if (!buff.is_inert)
+        {
+            ret += "has active buff\n";
+        }
+
+        return ret;
     }
 }
 [System.Serializable]
@@ -82,6 +143,8 @@ public enum buff_type
     actions,
     initiative
 }
+[System.Serializable]
+
 public struct Buff
 {
     public List<NamedBuffEffect> effects;
@@ -105,7 +168,7 @@ public struct Buff
         return ret;
     }
 
-    public bool is_inert { get { return effects.Count == 0; } }
+    public bool is_inert { get { return effects == null || effects.Count == 0; } }
 
     public int lasts;
 }

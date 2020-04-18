@@ -32,8 +32,13 @@ public class Party : MonoBehaviour
     public Character this[int n]
     {
         get
-        {
-            return member_positions.members_positions[n];
+        { Dictionary<int, Character> mps = member_positions.members_positions;
+            if (!mps.ContainsKey(n))
+            {
+                return null;
+            }
+            return mps[n];
         }
     }
+    
 }

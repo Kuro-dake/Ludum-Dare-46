@@ -6,8 +6,18 @@ using UnityEngine;
 
 public abstract class Character : MonoBehaviour
 {
-
-    public List<Ability> abilities = new List<Ability>();
+    [SerializeField]
+    List<Ability> abilities = new List<Ability>();
+    protected List<Ability> character_abilities
+    {
+        get
+        {
+            abilities.ForEach(delegate (Ability a) {
+                a.owner = this;
+            });
+            return abilities;
+        }
+    }
 
     public List<Buff> buffs = new List<Buff>();
 
@@ -19,7 +29,7 @@ public abstract class Character : MonoBehaviour
     }
     public int position; // 0-3 position on line
     public Party party;
-    public Party opposing_part
+    public Party opposing_party
     {
         get
         {
@@ -31,7 +41,10 @@ public abstract class Character : MonoBehaviour
     }
     [SerializeField]
     protected int _hp = 1;
-    public int hp { get { return _hp; } protected set { _hp = value; } } 
+    public int hp { get { return _hp; } protected set { _hp = value; } }
+    [SerializeField]
+    int _defense;
+    public int defense { get { return _defense + GetBuffsValue(buff_type.defense); } }
     public bool alive
     {
         get { return hp > 0; }
@@ -47,10 +60,6 @@ public abstract class Character : MonoBehaviour
         if(pos < -1 || pos > 3)
         {
             throw new UnityException("Pos can't be " + pos);
-        }
-        if (pos != -1)
-        {
-            position = pos;
         }
         return StartCoroutine(GoToPositionStart(pos));
     }
@@ -77,6 +86,10 @@ public abstract class Character : MonoBehaviour
             yield return null;
         }
 
+        if (pos != -1)
+        {
+            position = pos;
+        }
         go_to_position_routine = null;
     }
 
@@ -128,13 +141,22 @@ public abstract class Character : MonoBehaviour
     }
     protected virtual void ReceiveDamage(int damage)
     {
+        damage -= defense;
         hp -= damage;
     }
     public virtual void Hit(int damage)
     {
+        if (!alive)
+        {
+            return;
+        }
         Shake();
         ReceiveDamage(damage);
-        
+        if (!alive)
+        {
+            GetComponent<SpriteRenderer>().color -= Color.black * .5f;
+            party.member_positions.OnCharacterDeath(this);
+        }
     }
 
     private void Update()
@@ -144,31 +166,51 @@ public abstract class Character : MonoBehaviour
             throw new UnityException("Character " + name + " wasn't initialized!");
         }
     }
-    public virtual void StartRound()
+    public virtual Coroutine StartRound()
     {
+        has_finished_acting = false;
         ap = max_ap;
+
+        return null;
     }
     public virtual void EndRound()
     {
+        
+        for(int i = 0; i < buffs.Count; i++)
+        {
+            Buff b = buffs[i];
+            b.lasts--;
+            buffs[i] = b;
+        }
+
         buffs.RemoveAll(delegate (Buff b)
         {
-            b.lasts--;
+            
             return b.lasts <= 0;
         });
+
+        opposing_party.member_positions.RemoveDead();
+        
     }
     public virtual void StartTurn() { }
     public bool has_actions_left { get { return ap > 0; } }
-
+    public bool has_finished_acting = false;
+    [SerializeField]
     int _max_ap = 1;
     public int max_ap { get { return _max_ap + GetBuffsValue(buff_type.actions); } }
     protected int ap;
-    protected bool SpendAP(int amount = 1)
+    public bool SpendAP(int amount = 1)
     {
         if (ap >= amount)
         {
             ap -= amount;
+            if(ap == 0)
+            {
+                has_finished_acting = true;
+            }
             return true;
         }
+        //has_finished_acting = true;
         return false;
     }
     public abstract void Interact(Character c);
@@ -185,13 +227,54 @@ public abstract class Character : MonoBehaviour
 
     private void OnMouseDown()
     {
-        GM.controls.character_clicked = this;
+        //GM.controls.character_clicked = this;
     }
-
+    private void OnMouseEnter()
+    {
+        GM.ui.ShowAbilityButtons(this, GM.game.current_round_character.GetAvailableAbilitiesFor(this));
+    }
+    private void OnMouseExit()
+    {
+        GM.ui.HideAbilityButtons();
+    }
     private void OnMouseOver()
     {
-        
+        GM.controls.character_hover = this;
     }
+    protected target_type GetTargetType(Character c)
+    {
+        target_type type = target_type.enemy;
 
+        if (c == this)
+        {
+            type = target_type.self;
+        }
+        else if (c.party == party)
+        {
+            type = target_type.ally;
+        }
+        return type;
+    }
+    public virtual List<Ability> GetAvailableAbilitiesFor(Character c)
+    {
+        target_type type = GetTargetType(c);
+        
+        List<Ability> ret = character_abilities.FindAll(delegate (Ability a)
+        {
+            if(type == target_type.self)
+            {
+                return a.target_type == target_type.self || a.target_type == target_type.ally;
+            }
+            return a.target_type == type;
+        });
+        if(target_type.self == type || target_type.ally == type)
+        {
+            return ret; 
+        }
+        return ret.FindAll(delegate (Ability a)
+        {
+            return a.from_positions.Contains(position) && a.target_positions.Contains(c.position) && a.target_number == 1;
+        });
+    }
 
 }

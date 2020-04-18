@@ -60,7 +60,8 @@ public class GM : MonoBehaviour
     public static LevelManager level_manager { get { return GetScript<LevelManager>("LevelManager"); } }
     public static CharacterManager characters { get { return GetScript<CharacterManager>("CharacterManager"); } }
     public static Text devout { get { return GetScript<Text>("DevOut"); } }
-    
+    public static Text devoutright { get { return GetScript<Text>("DevOutRight"); } }
+    public static UIControls ui { get { return GetScript<UIControls>("UI"); } }
     public static bool devout_visible {
         set
         {

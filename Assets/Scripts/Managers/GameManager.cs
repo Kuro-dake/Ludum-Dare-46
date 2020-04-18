@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     
     public void UpdateDevout()
     {
+        GM.devoutright.text = "";
         if (GM.dev_options.hide_dev_text_output)
         {
             GM.devout.text = "";
@@ -44,6 +45,40 @@ public class GameManager : MonoBehaviour
         GM.devout.text = string.Format("<color=green>{0}</color> <color=blue>{1}</color> <color=red>{2}</color> <color=gray>{3}</color>", 
             p["Ranger"].hp, p["Wizard"].hp, p["Warrior"].hp, p["Gray"].hp
             );
+
+        GM.devoutright.text = "";
+        foreach(KeyValuePair<int, Character> kv in GM.enemy_party.member_positions.members_positions)
+        {
+            Character c = kv.Value;
+            GM.devoutright.text += " <color=#" + ColorUtility.ToHtmlStringRGB(c.GetComponent<SpriteRenderer>().color) + ">" + c.hp + "</color>";
+        }
+
+        GM.devout.text += hover_text;
+    }
+
+    string hover_text
+    {
+        get
+        {
+            string ret = "\n";
+            if (GM.controls.character_hover != null)
+            {
+                List<Ability> abilities = GM.game.current_round_character.GetAvailableAbilitiesFor(GM.controls.character_hover);
+                if (abilities.Count > 0)
+                {
+                    foreach (Ability a in abilities)
+                    {
+                        ret += a.ToString() + "===========\n";
+                    }
+                }
+                else
+                {
+                    ret = "\nno abilities to affect this char";
+                }
+            }
+
+            return ret;
+        }
     }
 
     public void Hit(Vector2 point, Vector2 from, bool blood)
@@ -199,14 +234,14 @@ public class GameManager : MonoBehaviour
     IEnumerator CombatStep()
     {
         GM.characters.NewTurn();
-        GM.characters.NextCharacterTurn(true);
+        yield return GM.characters.NextCharacterTurn(true);
         while (GM.characters.any_enemies_alive)
         {
-            while (GM.characters.current_round_character.has_actions_left || is_acting)
+            while (!GM.characters.current_round_character.has_finished_acting || is_acting)
             {
                 yield return null;
             }
-            GM.characters.NextCharacterTurn();
+            yield return GM.characters.NextCharacterTurn();
             yield return null;
 
         }

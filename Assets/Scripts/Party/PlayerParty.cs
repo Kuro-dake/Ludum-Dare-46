@@ -95,7 +95,7 @@ public class PlayerParty : Party
         {
             Character c = member_positions.transform.Find(starting_order[i]).GetComponent<Character>();
             c.position = i;
-
+            c.Heal(15);
         }
         base.Initialize();
 

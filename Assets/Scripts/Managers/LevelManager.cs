@@ -22,8 +22,8 @@ public class LevelManager : MonoBehaviour
         foreach (EnvItemLevelOccurenceData data in occurence_data)
         {
             float clear_dist = 20f;
-            dist = -5000;
-            while (dist < 5000)
+            dist = -20;
+            while (dist < 10)
             {
                 dist += data.distance_range.random + 10f;
                 if (dist < clear_dist && dist > -clear_dist)
@@ -46,7 +46,7 @@ public class LevelManager : MonoBehaviour
         }
         p.mode = parallax_mode.item;
         p.offset = offset;
-        go.transform.SetParent(GM.game.current_scenery.transform.Find("env_parallax"));
+        go.transform.SetParent(GM.game.current_scenery.env_parallax);
         go.transform.localScale = Random.Range(0, 2) == 1 && type_data.flips ? go.transform.localScale : new Vector3(go.transform.localScale.x * -1, go.transform.localScale.y, go.transform.localScale.z);
         go.transform.localScale *= type_data.scale.random;
         go.transform.localRotation = Quaternion.Euler(Vector3.forward * type_data.euler_rotation);
@@ -65,12 +65,20 @@ public class LevelManager : MonoBehaviour
             p.offset = GM.scenery.x *-1 + offset;
         }
         EnvEvent ee = go.GetComponent<EnvEvent>();
-        if(ee != null && pars.Length > 1)
+        if(ee != null)
         {
-            ee.dialogue = pars[1];
+            if (pars.Length > 1)
+            {
+                ee.data = pars[1];
+            }
+            if (pars.Length > 2)
+            {
+                ee.dialogue = pars[2];
+            }
+            ee.Initialize();
         }
         go.transform.localPosition = Vector3.zero;
-        go.transform.SetParent(GM.game.current_scenery.transform.Find("env_parallax"));
+        go.transform.SetParent(GM.game.current_scenery.env_parallax);
 
         return go;
     }

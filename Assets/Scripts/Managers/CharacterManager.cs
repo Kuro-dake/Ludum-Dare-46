@@ -146,6 +146,7 @@ public class CharacterManager : MonoBehaviour
         int i = 0;
         foreach(string s in pars.Split(new char[] { ';' })){ 
             Enemy e = Instantiate(GetEnemy(s));
+            e.gameObject.name = e.gameObject.name.Replace("(Clone)", "");
             e.position = i++;
             e.transform.SetParent(ep.members.transform);
             e.transform.localPosition = Vector2.zero;
@@ -279,6 +280,8 @@ public class CharacterManager : MonoBehaviour
 
     }
 
+    public bool show_enemy_targets = false;
+
     private void RefreshCurrentCharacterMarker()
     {
         dev_turn_marker.SetParent(current_round_character.transform);
@@ -287,6 +290,9 @@ public class CharacterManager : MonoBehaviour
 
     public List<Character> GetNextTurnSequence()
     {
+        if (!show_enemy_targets) {
+            return new List<Character>();
+        }
         List<Character> ioc = GetInitiativeOrderedCharacters();
         
         List<Character> ret = new List<Character>();

@@ -78,5 +78,12 @@ public class PlayerCharacter : Character
     }
 
     protected Animator anim { get { return GetComponent<Animator>(); } }
-    
+
+    public override string display_name
+    {
+        get
+        {
+            return PlayerParty.display_names[name];
+        }
+    }
 }

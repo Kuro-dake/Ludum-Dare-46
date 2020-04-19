@@ -97,7 +97,7 @@ MonoBehaviour:
   abilities:
   - owner: {fileID: 0}
     name: Heal
-    sprite: {fileID: 0}
+    sprite_name: 
     from_positions: 00000000010000000200000003000000
     target_type: 1
     damage: 0
@@ -116,6 +116,9 @@ MonoBehaviour:
   initiative: 0
   has_finished_acting: 0
   _max_ap: 1
+  resources:
+    first: 3
+    second: 8
 --- !u!70 &741524822824428920
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

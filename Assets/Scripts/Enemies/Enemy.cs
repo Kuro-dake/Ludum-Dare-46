@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Enemy : Character
 {
+
+    public IntRange resources;
     public override Coroutine GoToPosition(int pos = -1)
     {
         PrepareRandomAction(true);
@@ -15,6 +17,10 @@ public class Enemy : Character
         
         base.Hit(damage);
         
+    }
+    protected override void OnDeath()
+    {
+        GM.game.GeneratePickup(transform.position + Vector3.up * 4f, resources.random * 1000);
     }
     Ability use_this_round;
     List<int> targets;
@@ -91,7 +97,7 @@ public class Enemy : Character
 
     public void DisplayNextTargets()
     {
-        if (use_this_round != null)
+        if (use_this_round != null && GM.characters.show_enemy_targets)
         {
             GM.characters.MarkTargets(use_this_round.TargetCharacters(targets));
         }

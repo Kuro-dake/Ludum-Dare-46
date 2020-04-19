@@ -7,6 +7,22 @@ using UnityEngine;
 public abstract class Character : MonoBehaviour
 {
 
+    public void ModifyStat(string stat_name, int value)
+    {
+        switch (stat_name)
+        {
+            case "maxhp":
+                max_hp += value;
+                break;
+            case "defense":
+                _defense += value;
+                break;
+            case "initiative":
+                initiative += value;
+                break;
+        }
+    }
+
     public Color color { get { return GetComponent<SpriteRenderer>().color; } }
 
     [SerializeField]
@@ -161,9 +177,10 @@ public abstract class Character : MonoBehaviour
         {
             GetComponent<SpriteRenderer>().color -= Color.black * .5f;
             party.members.OnCharacterDeath(this);
+            OnDeath();
         }
     }
-
+    protected virtual void OnDeath() { }
     private void Update()
     {
         if (!initialized)
@@ -238,10 +255,11 @@ public abstract class Character : MonoBehaviour
     {
         GM.ui.HideAbilityButtons();
         GM.characters.MarkTargets();
+        GM.ui.description = "";
     }
     private void OnMouseOver()
     {
-        GM.ui.character_hover = this;
+        GM.ui.description = ToString();
     }
     protected target_type GetTargetType(Character c)
     {
@@ -308,5 +326,36 @@ public abstract class Character : MonoBehaviour
         name = savedCharacter.name;
         initiative = savedCharacter.initiative;
         abilities = new List<Ability>(savedCharacter.abilities);
+    }
+
+    public Ability GetAbilityByName(string a_name)
+    {
+        return abilities.Find(delegate (Ability a)
+        {
+            return a.name == a_name;
+        });
+    }
+
+    public override string ToString()
+    {
+        string ret = "<b>{0}</b>\n{1}/{2} HP\n{3} initiative\n{4} defense";
+        ret = string.Format(ret, display_name, hp,max_hp, initiative, defense);
+        if(character_abilities.Count > 0)
+        {
+            ret += "\n\n <b>Abilities:</b>";
+        }
+        else
+        {
+            ret += "\n\n <b>No abilities</b>";
+        }
+        foreach(Ability a in character_abilities) {
+            ret += "\n" + a.ToString();
+        }
+        return ret;
+    }
+
+    public virtual string display_name
+    {
+        get { return name; }
     }
 }

@@ -107,6 +107,7 @@ public class GM : MonoBehaviour
         cinema.PlayLevelString(0); 
         characters.Initialize();
         //game.StartCombat(_enemy_party);
+        ui.Initialize();
     }
 
     

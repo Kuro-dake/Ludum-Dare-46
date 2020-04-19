@@ -9,6 +9,7 @@ public class Scenery : MonoBehaviour
     float last_x;
     
     public Transform enemies_parallax { get { return transform.Find("enemies_parallax"); } }
+    public Transform env_parallax { get { return transform.Find("env_parallax"); } }
 
     
 
@@ -50,9 +51,13 @@ public class Scenery : MonoBehaviour
     void LoadXTags()
     {
         xtags.Clear();
-        foreach(string s in Resources.Load<TextAsset>("xtags").text.Split(new char[] { '\n' }))
+        foreach(string s in Resources.Load<TextAsset>("xtags").text.Split(new char[] { '\n' },System.StringSplitOptions.RemoveEmptyEntries))
         {
-            string[] p = s.Split(new char[] { '-' });
+            if(s.Trim().Length == 0)
+            {
+                continue;
+            }
+            string[] p = s.Trim().Split(new char[] { '-' });
             int x = int.Parse(p[0]) * -1;
             xtags.Add(x, p[1]);
         }

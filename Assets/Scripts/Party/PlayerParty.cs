@@ -5,7 +5,12 @@ using UnityEngine;
 
 public class PlayerParty : Party
 {
-    
+    public static Dictionary<string, string> display_names = new Dictionary<string, string>() {
+        { "Warrior" , "Scabbard: the warrior" },
+        { "Wizard" , "Sigil: the wizard" },
+        { "Ranger" , "Dusk: the deceiver" },
+        { "Gray" , "Gray: the demon" },
+    };
     // Update is called once per frame
     Dictionary<KeyCode, direction> direction_keys = new Dictionary<KeyCode, direction>()
     {

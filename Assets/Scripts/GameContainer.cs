@@ -75,6 +75,9 @@ public class GameContainer : MonoBehaviour
             GM.scenery.Movement(-checkpoint.x);
             GM.scenery.DeleteSkippedXtags();
             GM.level_manager.SpawnObject("checkpoint", 0f).GetComponent<Checkpoint>().ForceActivated();
+
+            GM.characters.show_enemy_targets = checkpoint.show_enemy_targets;
+            GM.game.resources = checkpoint.resources;
         }
         
     }
@@ -85,11 +88,16 @@ public class GameContainer : MonoBehaviour
 public class SavedPosition
 {
     public float x;
+    public bool show_enemy_targets;
+    public int resources;
     public List<SavedCharacter> characters = new List<SavedCharacter>();
 
     public void Save()
     {
+        
         x = GM.scenery.x;
+        show_enemy_targets = GM.characters.show_enemy_targets;
+        resources = GM.game.resources;
         foreach (Character c in GM.party.members.members)
         {
             characters.Add(new SavedCharacter(c));

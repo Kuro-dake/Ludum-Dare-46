@@ -97,7 +97,7 @@ MonoBehaviour:
   abilities:
   - owner: {fileID: 0}
     name: Cut
-    sprite: {fileID: 0}
+    sprite_name: 
     from_positions: 0000000001000000
     target_type: 0
     damage: 1
@@ -116,6 +116,9 @@ MonoBehaviour:
   initiative: 3
   has_finished_acting: 0
   _max_ap: 1
+  resources:
+    first: 3
+    second: 6
 --- !u!70 &4355673020839679179
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

@@ -5,7 +5,12 @@ using UnityEngine;
 public abstract class EnvEvent : MonoBehaviour
 {
     bool activated = false;
+    public string data;
     public string dialogue = "";
+    public virtual void Initialize()
+    {
+
+    }
     public void ForceActivated()
     {
         activated = true;

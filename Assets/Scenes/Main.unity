@@ -187,70 +187,45 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7687375724796160558, guid: a6e51ef7b4b400846ba5bb0a964546e6,
-        type: 3}
-      propertyPath: current_x
-      value: 50
+    - target: {fileID: 1415587881, guid: a6e51ef7b4b400846ba5bb0a964546e6, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 7687375725801481253, guid: a6e51ef7b4b400846ba5bb0a964546e6,
-        type: 3}
-      propertyPath: abilities.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7687375725801481253, guid: a6e51ef7b4b400846ba5bb0a964546e6,
-        type: 3}
-      propertyPath: abilities.Array.data[2].from_positions.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 7687375725801481253, guid: a6e51ef7b4b400846ba5bb0a964546e6,
-        type: 3}
-      propertyPath: abilities.Array.data[2].target_positions.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 7687375725801481253, guid: a6e51ef7b4b400846ba5bb0a964546e6,
-        type: 3}
-      propertyPath: abilities.Array.data[2].name
-      value: Arrow1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7687375725801481253, guid: a6e51ef7b4b400846ba5bb0a964546e6,
-        type: 3}
-      propertyPath: abilities.Array.data[2].from_positions.Array.data[1]
+    - target: {fileID: 1415587881, guid: a6e51ef7b4b400846ba5bb0a964546e6, type: 3}
+      propertyPath: m_AnchorMin.y
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7687375725801481253, guid: a6e51ef7b4b400846ba5bb0a964546e6,
-        type: 3}
-      propertyPath: abilities.Array.data[2].from_positions.Array.data[2]
+    - target: {fileID: 1415587881, guid: a6e51ef7b4b400846ba5bb0a964546e6, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1415587881, guid: a6e51ef7b4b400846ba5bb0a964546e6, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1415587881, guid: a6e51ef7b4b400846ba5bb0a964546e6, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -305.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1415587881, guid: a6e51ef7b4b400846ba5bb0a964546e6, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 320
+      objectReference: {fileID: 0}
+    - target: {fileID: 2132872613, guid: a6e51ef7b4b400846ba5bb0a964546e6, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2132872613, guid: a6e51ef7b4b400846ba5bb0a964546e6, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.15000153
+      objectReference: {fileID: 0}
+    - target: {fileID: 2132872614, guid: a6e51ef7b4b400846ba5bb0a964546e6, type: 3}
+      propertyPath: m_FontData.m_FontSize
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2132872614, guid: a6e51ef7b4b400846ba5bb0a964546e6, type: 3}
+      propertyPath: m_FontData.m_MinSize
       value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7687375725801481253, guid: a6e51ef7b4b400846ba5bb0a964546e6,
-        type: 3}
-      propertyPath: abilities.Array.data[2].from_positions.Array.data[3]
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7687375725801481253, guid: a6e51ef7b4b400846ba5bb0a964546e6,
-        type: 3}
-      propertyPath: abilities.Array.data[2].damage
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 7687375725801481253, guid: a6e51ef7b4b400846ba5bb0a964546e6,
-        type: 3}
-      propertyPath: abilities.Array.data[2].target_positions.Array.data[1]
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7687375725801481253, guid: a6e51ef7b4b400846ba5bb0a964546e6,
-        type: 3}
-      propertyPath: abilities.Array.data[2].target_positions.Array.data[2]
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7687375725801481253, guid: a6e51ef7b4b400846ba5bb0a964546e6,
-        type: 3}
-      propertyPath: abilities.Array.data[2].target_positions.Array.data[3]
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7687375725801481253, guid: a6e51ef7b4b400846ba5bb0a964546e6,
-        type: 3}
-      propertyPath: abilities.Array.data[2].target_number
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a6e51ef7b4b400846ba5bb0a964546e6, type: 3}

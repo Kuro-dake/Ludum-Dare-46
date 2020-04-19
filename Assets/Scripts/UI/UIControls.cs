@@ -10,7 +10,7 @@ public class UIControls : MonoBehaviour
     Image sequence_icon_prefab = null;
     Canvas canvas { get { return GetComponent<Canvas>(); } }
     [SerializeField]
-    Transform ability_buttons, global_ability_buttons, sequence_display;
+    Transform ability_buttons, global_ability_buttons, sequence_display, shop_display, shop_display_buttons;
     Vector2 GetCharacterCanvasPosition(Character target)
     {
         Vector2 offsetPos = target.transform.position + Vector3.up * 1.5f;
@@ -34,6 +34,7 @@ public class UIControls : MonoBehaviour
             b.transform.SetParent(ability_buttons);
             b.GetComponent<RectTransform>().localPosition = GetCharacterCanvasPosition(target) + Vector2.up * 35f * i++;
             b.gameObject.GetComponentInChildren<Text>().text = a.name;
+            b.GetComponent<ButtonDescription>().description = a.name;
             b.onClick.AddListener(delegate {
                 a.ApplyAbility(target);
                 HideAbilityButtons();
@@ -59,6 +60,7 @@ public class UIControls : MonoBehaviour
             rt.pivot = Vector2.up;
             rt.localPosition = (Vector2.down * 35f * (++i)) + Vector2.right * 35f;
             b.gameObject.GetComponentInChildren<Text>().text = a.name;
+            b.GetComponent<ButtonDescription>().description = a.name;
             b.onClick.AddListener(delegate {
                 a.ApplyAbility();
                 HideAbilityButtons();
@@ -74,7 +76,7 @@ public class UIControls : MonoBehaviour
         List<Character> nts = GM.characters.GetNextTurnSequence();
         int i = 0;
         float step = 40f;
-        float start = step * nts.Count * -.5f;
+        float start = step * (nts.Count -1) * -.5f;
         foreach (Character c in nts)
         {
             Image icon = Instantiate(sequence_icon_prefab);
@@ -94,9 +96,162 @@ public class UIControls : MonoBehaviour
     {
         global_ability_buttons.DestroyChildren();
     }
-    public Character character_hover = null;
-    private void LateUpdate()
+    
+    
+
+    [SerializeField]
+    ShopButton shop_button_prefab = null;
+    public float shop_button_margin = 250f;
+    public void OpenShop(string option_string)
     {
-        character_hover = null;
+        shop_display.gameObject.SetActive(true);
+        option_string = option_string.Trim();
+        string[] options = option_string.Split(new char[] { '+' }, System.StringSplitOptions.RemoveEmptyEntries);
+
+        int num = options.Length;
+        float step = shop_button_margin;
+        float start = step * (num - 1) * -.5f;
+        int i = 0;
+        foreach(string option in options)
+        {
+            Vector2 pos = Vector2.right * (step * i++ + start);
+            ShopButton sb = Instantiate(shop_button_prefab, shop_display_buttons, false);
+            RectTransform rt = sb.GetComponent<RectTransform>();
+            rt.localPosition = pos;
+            
+            ShopItemData sid = ShopItemData.Parse(option);
+
+            sb.text = sid.character_name + " +" + sid.value + (sid.ability != null ? " "+sid.ability_name : "") + " " + sid.stat;
+
+            //sb.char_icon.color = 
+            sb.button.onClick.AddListener(delegate {
+                ShopItemData sidin = ShopItemData.Parse(option);
+                Debug.Log(sidin.ToString());
+                sidin.Apply();
+            });
+        }
+
+    }
+
+    private class ShopItemData
+    {
+        public string character_name;
+        public Character character;
+        public string ability_name;
+        public Ability ability;
+        public string stat;
+        public int value;
+        public int price;
+
+        static List<string> stat_names = new List<string>() { 
+            "maxhp","defense","initiative"
+        };
+
+        static List<string> ability_stat_names = new List<string>()
+        {
+            "damage", "heal", "target_number", "buff"
+        };
+
+        public bool Apply()
+        {
+            if(GM.game.resources < price)
+            {
+                return false;
+            }
+
+            GM.game.resources -= price;
+
+            if(ability != null)
+            {
+                ability.ModifiyStat(stat, value);
+            }
+            else
+            {
+                character.ModifyStat(stat, value);
+            }
+
+            return true;
+        }
+
+        public static ShopItemData Parse(string data)
+        {
+            ShopItemData ret = new ShopItemData();
+
+            string[] data_frag = data.Split(new char[] { '/' }, System.StringSplitOptions.RemoveEmptyEntries);
+
+            for(int i = 0; i < data_frag.Length; i++)
+            {
+                data_frag[i] = data_frag[i].Trim();
+            }
+
+            ret.character_name = data_frag[0];
+            ret.character = GM.party[ret.character_name];
+            if (!stat_names.Contains(data_frag[1]))
+            {
+                ret.ability_name = data_frag[1];
+                ret.ability = ret.character.GetAbilityByName(ret.ability_name);
+                if(ret.ability == null)
+                {
+                    throw new UnityException("Non extistent shop item " + ret.ability_name);
+                }
+                ret.stat = data_frag[2];
+                ret.value = int.Parse(data_frag[3]);
+                ret.price = int.Parse(data_frag[4].Replace("price", ""));
+            }
+            else
+            {
+                ret.stat = data_frag[1];
+                ret.value = int.Parse(data_frag[2]);
+                ret.price = int.Parse(data_frag[3].Replace("price", ""));
+            }
+
+            return ret;
+        }
+        public override string ToString()
+        {
+            return "name: " + character_name + ";  " + "; ability_name: " + ability_name + "; stat: " + stat + ";  " + "; value: " + value + ";  " + "; price: " + price + ";  ";
+        }
+    }
+
+    public void CloseShop()
+    {
+        shop_display_buttons.DestroyChildren();
+        shop_display.gameObject.SetActive(false);
+    }
+    [SerializeField]
+    GameObject description_panel = null;
+    public string description { set
+        {
+            if(value.Length == 0)
+            {
+                SetDescriptionActive(false);
+                return;
+            }
+            SetDescriptionActive(true);
+            Text t = description_panel.GetComponentInChildren<Text>();
+            t.text = value;
+        }
+    }
+    Coroutine sda_routine = null;
+    bool sda_to;
+    void SetDescriptionActive(bool to)
+    {
+        if(sda_routine != null && !sda_to)
+        {
+            StopCoroutine(sda_routine);
+        }
+        sda_to = to;
+        sda_routine = StartCoroutine(SetDescriptionActiveStep(to));
+    }
+    IEnumerator SetDescriptionActiveStep(bool to)
+    {
+        yield return to ? null : new WaitForSeconds(.5f);
+        description_panel.SetActive(to);
+    }
+
+    public void Initialize()
+    {
+        CloseShop();
+        description_panel.SetActive(false);
     }
 }

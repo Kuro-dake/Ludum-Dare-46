@@ -10,7 +10,16 @@ public class GameManager : MonoBehaviour
     {
         return sprites.Find(delegate (NamedSprite ns) { return ns.first == sprite_name; }).second;
     }
-
+    [SerializeField]
+    ResourcePickup pickup_prefab;
+    public ResourcePickup GeneratePickup(Vector2 where, int amount)
+    {
+        ResourcePickup rp = Instantiate(pickup_prefab);
+        rp.transform.SetParent(GM.scenery.env_parallax);
+        rp.transform.position = where;
+        rp.Play(amount);
+        return rp;
+    }
     public game_phase phase {
         get
         {
@@ -42,8 +51,8 @@ public class GameManager : MonoBehaviour
             return;
         }
         Party p = GM.party;
-        GM.devout.text = string.Format("<color=green>{0}</color> <color=blue>{1}</color> <color=red>{2}</color> <color=gray>{3}</color>", 
-            p["Ranger"].hp, p["Wizard"].hp, p["Warrior"].hp, p["Gray"].hp
+        GM.devout.text = string.Format("<color=green>{0}</color> <color=blue>{1}</color> <color=red>{2}</color> <color=gray>{3}</color>  {4}", 
+            p["Ranger"].hp, p["Wizard"].hp, p["Warrior"].hp, p["Gray"].hp, _display_resources
             );
 
         GM.devoutright.text = "";
@@ -57,33 +66,10 @@ public class GameManager : MonoBehaviour
             GM.devoutright.text += " <color=#" + ColorUtility.ToHtmlStringRGB(c.GetComponent<SpriteRenderer>().color) + ">" + c.hp + "</color>";
         }
 
-        GM.devout.text += hover_text;
+    
     }
 
-    string hover_text
-    {
-        get
-        {
-            string ret = "\n";
-            if (GM.ui.character_hover != null)
-            {
-                List<Ability> abilities = GM.game.current_round_character.GetAvailableAbilitiesFor(GM.ui.character_hover);
-                if (abilities.Count > 0)
-                {
-                    foreach (Ability a in abilities)
-                    {
-                        ret += a.ToString() + "===========\n";
-                    }
-                }
-                else
-                {
-                    ret = "\nno abilities to affect this char";
-                }
-            }
-
-            return ret;
-        }
-    }
+    
 
     public void Hit(Vector2 point, Vector2 from, bool blood)
     {
@@ -206,7 +192,62 @@ public class GameManager : MonoBehaviour
             c.ClearBuffs();
         });
     }
+
+    Coroutine display_amount_routine = null;
+    int _display_resources = 0;
+    int _resources = 0;
+    public int resources
+    {
+        get
+        {
+            return _resources;
+        }
+        set
+        {
+            _resources = Mathf.Clamp(value, 0, int.MaxValue);
+
+            if (display_amount_routine == null)
+            {
+                display_amount_routine = StartCoroutine(DisplayAmount());
+            }
+            
+        }
+    }
+
+    AudioSource res_as;
+    IEnumerator DisplayAmount()
+    {
+        FloatRange fr = new FloatRange(.9f, 1f);
+        Debug.Log("up");
+        while (_resources != _display_resources)
+        {
+            int difference = Mathf.Abs(_display_resources - _resources);
+            int increment = Mathf.Clamp(Mathf.RoundToInt((float)difference / 10f), 0, int.MaxValue);
+
+            if (increment == 0)
+            {
+                yield return null;
+                increment = 1;
+            }
+            bool increase = _display_resources < _resources;
+            _display_resources += increment * (increase ? 1 : -1);
+            if (res_as == null)
+            {
+                res_as = GM.audio_manager.PlaySound("pickup");
+            }
+            if (res_as != null)
+            {
+                if (!increase) { res_as.Stop(); }
+                res_as.time = 0f;
+                res_as.pitch = fr;
+            }
+            yield return null;
+        }
+        display_amount_routine = null;
+    }
     
+
+
 }
 
 public enum game_phase

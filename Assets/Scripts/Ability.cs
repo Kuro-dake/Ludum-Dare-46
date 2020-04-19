@@ -25,6 +25,8 @@ public class Ability
     }
 
     public Character owner;
+    [System.NonSerialized]
+    public Color ability_color = Color.white;
     public string name;
     public string sprite_name;
     public List<int> from_positions = new List<int>();
@@ -187,7 +189,7 @@ public class Ability
             ret += " for " + rounds;
         }
 
-        return name + ": " + ret;
+        return name + (ret.Length > 0 ? ": " + ret : "");
     }
 
     public List<Character> TargetCharacters(List<int> poss = null)

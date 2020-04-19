@@ -15,15 +15,7 @@ public class Actor : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        if (anim != null)
-        {
-            anim.SetBool("acting", true);
-            anim.speed = Random.Range(.9f, 1.1f);
-        }
-    }
-
+    
     public bool talking
     {
         set
@@ -32,6 +24,30 @@ public class Actor : MonoBehaviour
             {
                 mouth.SetBool("talking", value);
             }
+        }
+    }
+    float current_rot = 0f;
+    float target_rot = 1f;
+    float multiply_rot = 3f;
+    float turn_takes = 3f;
+    float turn_takes_inverse;
+    private void Update()
+    {
+        transform.localRotation = Quaternion.LerpUnclamped(Quaternion.identity, Quaternion.Euler(Vector3.forward * multiply_rot), current_rot);
+        current_rot = Mathf.MoveTowards(current_rot, target_rot, Time.deltaTime * turn_takes_inverse);
+        if(Mathf.Abs(current_rot) >= Mathf.Abs(target_rot) && Mathf.Sign(current_rot) == Mathf.Sign(target_rot))
+        {
+            target_rot *= -1;
+        }
+    }
+    private void Start()
+    {
+        turn_takes += Random.Range(0f, 2f);
+        turn_takes_inverse = 1f / turn_takes;
+        if (anim != null)
+        {
+            anim.SetBool("acting", true);
+            anim.speed = Random.Range(.9f, 1.1f);
         }
     }
     Coroutine movement_routine;

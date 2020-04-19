@@ -36,13 +36,10 @@ public class ShopButton : MonoBehaviour
     }
 
     public string text {
-        get
-        {
-            return button.GetComponentInChildren<Text>().text; 
-        }
+        
         set
         {
-            button.GetComponentInChildren<Text>().text = value;
+            button.GetComponentInChildren<ButtonDescription>().description = value;
         }
 
     }

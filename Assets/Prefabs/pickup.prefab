@@ -1494,7 +1494,8 @@ ParticleSystem:
     uvChannelMask: -1
     rowMode: 1
     sprites:
-    - sprite: {fileID: 0}
+    - sprite: {fileID: -2451515257954963783, guid: 3e7c6453b0e5b5442a0dba6c9b584cf9,
+        type: 3}
     flipU: 0
     flipV: 0
   VelocityModule:
@@ -4742,7 +4743,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 77006033
-  m_SortingLayer: 1
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_RenderMode: 0
   m_SortMode: 0

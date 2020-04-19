@@ -116,7 +116,7 @@ public class Scenery : MonoBehaviour
         Debug.Log("Finished xtag");
     }
     
-    void Update()
+    void LateUpdate()
     {
         
         UpdateParallax();

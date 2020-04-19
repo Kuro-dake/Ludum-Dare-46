@@ -75,32 +75,34 @@ public abstract class Character : MonoBehaviour
         hp = Mathf.Clamp(hp+amount,0, max_hp);
     }
 
-    public virtual Coroutine GoToPosition(int pos = -1)
+    public virtual Coroutine GoToPosition(int pos = -1, bool instant = false)
     {
         if(pos < -1 || pos > 3)
         {
             throw new UnityException("Pos can't be " + pos);
         }
-        return StartCoroutine(GoToPositionStart(pos));
+        return StartCoroutine(GoToPositionStart(pos, instant));
     }
-    IEnumerator GoToPositionStart(int pos)
+    IEnumerator GoToPositionStart(int pos, bool instant = false)
     {
         while (go_to_position_routine != null)
         {
             yield return null;
         }
-        go_to_position_routine = StartCoroutine(GoToPositionStep(pos));
+        go_to_position_routine = StartCoroutine(GoToPositionStep(pos, .5f, instant));
         yield return go_to_position_routine;
     }
     Coroutine go_to_position_routine;
-    IEnumerator GoToPositionStep(int pos, float duration = 1f)
+    IEnumerator GoToPositionStep(int pos, float duration = 1f, bool instant = false)
     {
         Vector2 from = transform.localPosition;
         Vector2 to = new Vector2(party.GetPositionVector(pos == -1 ? position : pos), 0f);
         float current = 0f;
         float multiplier = 1f / duration;
 
-        while((current += Time.deltaTime) < 1f)
+        int instant_jump = instant ? 1000000 : 1;
+
+        while((current += Time.deltaTime * instant_jump * multiplier) < 1f)
         {
             transform.localPosition = Vector2.Lerp(from, to, current);
             yield return null;
@@ -114,11 +116,27 @@ public abstract class Character : MonoBehaviour
     }
 
     bool initialized = false;
+    bool _moving;
+    public bool moving
+    {
+        get
+        {
+            return _moving;
+        }
+        set
+        {
+            _moving = value;
+            anim.speed = (value ? 1.5f : .1f) * anim_multiplier;
+        }
+    }
+    float anim_multiplier;
     public virtual void Initialize()
     {
         GM.characters.AddCharacter(this);
         initialized = true;
         hp = max_hp;
+        anim_multiplier = UnityEngine.Random.Range(.8f, 1.2f);
+        anim.speed = .1f * anim_multiplier;
     }
 
     public void ApplyBuff(Buff b)
@@ -131,11 +149,11 @@ public abstract class Character : MonoBehaviour
     }
 
     Transform _sprite_transform;
-    Transform sprite_transform { get { return _sprite_transform != null ? _sprite_transform : (_sprite_transform = transform.Find("sprite")); } }
+    Transform sprite_transform { get { return _sprite_transform != null ? _sprite_transform : (_sprite_transform = transform.Find("Sprite")); } }
     SpriteRenderer _sr;
     protected SpriteRenderer sr { get { return _sr != null ? _sr : (_sr = sprite_transform.GetComponent<SpriteRenderer>()); } }
     Animator _anim;
-    protected Animator anim { get { return _anim != null ? _anim : (_anim = sprite_transform.GetComponent<Animator>()); } }
+    public Animator anim { get { return _anim != null ? _anim : (_anim = GetComponent<Animator>()); } }
 
     Coroutine shake_routine;
     Coroutine Shake()
@@ -175,10 +193,11 @@ public abstract class Character : MonoBehaviour
         ReceiveDamage(damage);
         if (!alive)
         {
-            GetComponent<SpriteRenderer>().color -= Color.black * .5f;
+            sr.gameObject.AddComponent<Fader>().FadeOut();
             party.members.OnCharacterDeath(this);
             OnDeath();
         }
+        GM.audio_manager.PlaySound("hit", 1f, new FloatRange(.8f,1.2f));
     }
     protected virtual void OnDeath() { }
     private void Update()
@@ -255,11 +274,11 @@ public abstract class Character : MonoBehaviour
     {
         GM.ui.HideAbilityButtons();
         GM.characters.MarkTargets();
-        GM.ui.description = "";
+        GM.ui.SetDescription("");
     }
     private void OnMouseOver()
     {
-        GM.ui.description = ToString();
+        GM.ui.SetDescription(ToString());
     }
     protected target_type GetTargetType(Character c)
     {
@@ -357,5 +376,22 @@ public abstract class Character : MonoBehaviour
     public virtual string display_name
     {
         get { return name; }
+    }
+    [SerializeField]
+    string _icon_name;
+    public virtual string icon_name
+    {
+        get
+        {
+            return _icon_name;
+        }
+    }
+
+    public virtual void Step()
+    {
+        if (moving)
+        {
+            GM.audio_manager.PlaySound("step", 1f, new FloatRange(.3f, .4f));
+        }
     }
 }

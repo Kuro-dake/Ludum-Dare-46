@@ -16,6 +16,11 @@ public class ParticleSystemRotationReset : MonoBehaviour
     
     private void LateUpdate()
     {
+        if(ps == null)
+        {
+            Destroy(this);
+            return;
+        }
         ParticleSystem.Particle[] pss = new ParticleSystem.Particle[ps.particleCount];
         
         ps.GetParticles(pss);

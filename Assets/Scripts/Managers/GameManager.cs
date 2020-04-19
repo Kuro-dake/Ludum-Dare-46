@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour
     
     public void UpdateDevout()
     {
+        return;
         GM.devoutright.text = "";
         if (GM.dev_options.hide_dev_text_output)
         {
@@ -94,8 +95,8 @@ public class GameManager : MonoBehaviour
         {
             GameManager.pause = !GameManager.pause;
         }
-        
 
+        GM.music.running = phase == game_phase.movement ? 0 : 2;
     }
 
     public void LoadLevelParams(int level)
@@ -150,7 +151,7 @@ public class GameManager : MonoBehaviour
             throw new UnityException("Trying to start combat when a battle is already going on");
         }
         combat_camera_target.transform.position = Vector2.Lerp(GM.party.transform.position, current_enemy_party.transform.position, .5f);
-        GM.cine_cam.target = combat_camera_target;
+        //GM.cine_cam.target = combat_camera_target;
         return combat_routine = StartCoroutine(CombatStep());
     }
     Coroutine acting_routine = null;
@@ -185,12 +186,13 @@ public class GameManager : MonoBehaviour
 
         }
         combat_routine = null;
-        GM.cine_cam.target = GM.party.aim;
+        GM.cine_cam.target = GM.party.transform;
         Destroy(current_enemy_party.gameObject);
         GM.party.members.members.ForEach(delegate (Character c)
         {
             c.ClearBuffs();
         });
+        GM.ui.HideSequence();
     }
 
     Coroutine display_amount_routine = null;
@@ -233,7 +235,7 @@ public class GameManager : MonoBehaviour
             _display_resources += increment * (increase ? 1 : -1);
             if (res_as == null)
             {
-                res_as = GM.audio_manager.PlaySound("pickup");
+                //res_as = GM.audio_manager.PlaySound("pickup");
             }
             if (res_as != null)
             {

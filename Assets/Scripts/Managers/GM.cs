@@ -85,6 +85,9 @@ public class GM : MonoBehaviour
     public static CineCam cine_cam { get { return _inst._cine_cam; } }
     [SerializeField]
     Sprite _square = null, _circle = null;
+    [SerializeField]
+    Music _music;
+    public static Music music { get { return inst._music; } }
     public static Sprite square { get { return inst._square; } }
     public static Sprite circle { get { return inst._circle; } }
 

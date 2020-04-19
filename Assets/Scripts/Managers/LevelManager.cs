@@ -23,7 +23,7 @@ public class LevelManager : MonoBehaviour
         {
             float clear_dist = 20f;
             dist = -20;
-            while (dist < 10)
+            while (dist < 3000)
             {
                 dist += data.distance_range.random + 10f;
                 if (dist < clear_dist && dist > -clear_dist)
@@ -50,6 +50,7 @@ public class LevelManager : MonoBehaviour
         go.transform.localScale = Random.Range(0, 2) == 1 && type_data.flips ? go.transform.localScale : new Vector3(go.transform.localScale.x * -1, go.transform.localScale.y, go.transform.localScale.z);
         go.transform.localScale *= type_data.scale.random;
         go.transform.localRotation = Quaternion.Euler(Vector3.forward * type_data.euler_rotation);
+        go.transform.localPosition += Vector3.up * Random.Range(0f, .5f);
         return go;
     }
     public GameObject SpawnObject(string param_string, float offset = 40f)

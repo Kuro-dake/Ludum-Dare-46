@@ -12,11 +12,11 @@ public class ButtonDescription : MonoBehaviour, IPointerEnterHandler, IPointerEx
         {
             Debug.Log("description for " + name + " not set");
         }
-        GM.ui.description = description;
+        GM.ui.SetDescription(description, true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        GM.ui.description = "";
+        GM.ui.SetDescription("", true);
     }
 }

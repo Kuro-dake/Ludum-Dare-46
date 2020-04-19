@@ -7,10 +7,10 @@ public class Enemy : Character
 {
 
     public IntRange resources;
-    public override Coroutine GoToPosition(int pos = -1)
+    public override Coroutine GoToPosition(int pos = -1, bool instant = false)
     {
         PrepareRandomAction(true);
-        return base.GoToPosition(pos);
+        return base.GoToPosition(pos, instant);
     }
     public override void Hit(int damage)
     {
@@ -20,7 +20,7 @@ public class Enemy : Character
     }
     protected override void OnDeath()
     {
-        GM.game.GeneratePickup(transform.position + Vector3.up * 4f, resources.random * 1000);
+        GM.game.GeneratePickup(transform.position + Vector3.up * 4f, resources.random);
     }
     Ability use_this_round;
     List<int> targets;

@@ -1,7 +1,7 @@
-1-env:resources;2000;first_resources
-30-env:shop;Warrior/maxhp/10/50+Ranger/Bow/damage/2/100+Wizard/Lightning/damage/2/200+Wizard/Lightning/damage/2/300;first_shop
-60-encounter:goblin2;goblin2;goblin1;goblin2
-105-env:checkpoint;;first_checkpoint
+1000-env:checkpoint;;first_checkpoint
+100-encounter:goblin2;goblin2;goblin1;goblin2
+200-env:shop;Warrior/maxhp/10/50+Ranger/Throw knife/damage/2/100+Wizard/Lightning/damage/2/200+Wizard/Heal/heal/2/300;first_shop
+2000-env:resources;10;first_resources
 118-encounter:goblin2;goblin2;goblin1;goblin2
 224-encounter:goblin1;goblin2;goblin1;goblin2
 357-encounter:goblin1;goblin1;goblin2

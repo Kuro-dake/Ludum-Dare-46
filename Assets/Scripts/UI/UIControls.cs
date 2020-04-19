@@ -5,6 +5,20 @@ using UnityEngine.UI;
 public class UIControls : MonoBehaviour
 {
     [SerializeField]
+    List<NamedSprite> icons = new List<NamedSprite>();
+    public Sprite GetIcon(string icon_name)
+    {
+        try
+        {
+            return icons.Find(delegate (NamedSprite ns) { return ns.first == icon_name; }).second;
+        }
+        catch
+        {
+            Debug.Log("Icon named " + icon_name + " does not exist");
+            return null;
+        }
+    }
+    [SerializeField]
     Button button_prefab = null;
     [SerializeField]
     Image sequence_icon_prefab = null;
@@ -28,13 +42,21 @@ public class UIControls : MonoBehaviour
     public void ShowAbilityButtons(Character target, List<Ability> abilities)
     {
         int i = 0;
+        float step = 85f;
+        float start = step * (abilities.Count - 1) * -.5f;
+        
+            
+            
         foreach(Ability a in abilities)
         {
             Button b = Instantiate(button_prefab);
             b.transform.SetParent(ability_buttons);
-            b.GetComponent<RectTransform>().localPosition = GetCharacterCanvasPosition(target) + Vector2.up * 35f * i++;
-            b.gameObject.GetComponentInChildren<Text>().text = a.name;
-            b.GetComponent<ButtonDescription>().description = a.name;
+            b.GetComponent<RectTransform>().localPosition = GetCharacterCanvasPosition(target) + Vector2.right * (i++ * step + start) + Vector2.down * 2f; 
+            
+            b.GetComponent<ButtonDescription>().description = a.ToString();
+            Image img = b.transform.Find("Image").GetComponent<Image>();
+            img.sprite = GetIcon(a.sprite_name);
+            
             b.onClick.AddListener(delegate {
                 a.ApplyAbility(target);
                 HideAbilityButtons();
@@ -58,9 +80,10 @@ public class UIControls : MonoBehaviour
             rt.anchorMax = Vector2.up; 
             rt.anchorMin = Vector2.up;
             rt.pivot = Vector2.up;
-            rt.localPosition = (Vector2.down * 35f * (++i)) + Vector2.right * 35f;
-            b.gameObject.GetComponentInChildren<Text>().text = a.name;
-            b.GetComponent<ButtonDescription>().description = a.name;
+            rt.localPosition = (Vector2.down * 85f * (++i)) + Vector2.right * 35;
+            
+            b.GetComponent<ButtonDescription>().description = a.ToString();
+            b.transform.Find("Image").GetComponent<Image>().sprite = GetIcon(a.sprite_name);
             b.onClick.AddListener(delegate {
                 a.ApplyAbility();
                 HideAbilityButtons();
@@ -75,22 +98,29 @@ public class UIControls : MonoBehaviour
         sequence_icons.Clear();
         List<Character> nts = GM.characters.GetNextTurnSequence();
         int i = 0;
-        float step = 40f;
+        float step = 70f;
         float start = step * (nts.Count -1) * -.5f;
         foreach (Character c in nts)
         {
-            Image icon = Instantiate(sequence_icon_prefab);
-            icon.gameObject.AddComponent<SequenceIconHover>().character = c;
-            icon.transform.SetParent(sequence_display);
-            icon.gameObject.GetComponent<RectTransform>().localPosition = Vector2.right * (i++ * step + start) + Vector2.up * 25f;
-            
-            icon.color = c.color;
-            sequence_icons.Add(icon.gameObject);
+            Image iicon = Instantiate(sequence_icon_prefab);
+            Image icon = iicon.transform.Find("Image").GetComponent<Image>();
+            iicon.gameObject.AddComponent<SequenceIconHover>().character = c;
+            iicon.transform.SetParent(sequence_display);
+            iicon.gameObject.GetComponent<RectTransform>().localPosition = Vector2.right * (i++ * step + start) + Vector2.up * 25f;
+            icon.sprite = GetIcon(c.icon_name);
+            sequence_icons.Add(iicon.gameObject);
         }
+    }
+    public void HideSequence()
+    {
+        sequence_icons.ForEach(delegate (GameObject go) { Destroy(go); });
+        sequence_icons.Clear();
     }
     public void HideAbilityButtons()
     {
         ability_buttons.DestroyChildren();
+        priority_displayed = false;
+        SetDescription("");
     }
     public void HideGlobalAbilityButtons()
     {
@@ -116,18 +146,20 @@ public class UIControls : MonoBehaviour
         {
             Vector2 pos = Vector2.right * (step * i++ + start);
             ShopButton sb = Instantiate(shop_button_prefab, shop_display_buttons, false);
+            
             RectTransform rt = sb.GetComponent<RectTransform>();
             rt.localPosition = pos;
             
             ShopItemData sid = ShopItemData.Parse(option);
-
+            sb.button_image.sprite = GetIcon(sid.ability != null ? sid.ability.sprite_name : sid.stat);
             sb.text = sid.character.display_name 
                 + " +" + sid.value 
                 + (sid.ability != null ? " "+sid.ability_name : "") 
                 + " " + sid.stat 
                 + " for " + sid.price + " " + ShopItemData.resource_name;
 
-            sb.char_icon.color = sid.character.GetComponent<SpriteRenderer>().color;
+            sb.char_icon.sprite = GetIcon(sid.character.icon_name); 
+            
             sb.price = sid.price;
             sb.button.onClick.AddListener(delegate {
                 ShopItemData sidin = ShopItemData.Parse(option);
@@ -226,18 +258,33 @@ public class UIControls : MonoBehaviour
     }
     [SerializeField]
     GameObject description_panel = null;
-    public string description { set
+    bool priority_displayed = false;
+    public void SetDescription(string value, bool priority = false) 
+    {
+        
+        if (priority_displayed && !priority)
         {
-            if(value.Length == 0)
-            {
-                SetDescriptionActive(false);
-                return;
-            }
-            SetDescriptionActive(true);
-            Text t = description_panel.GetComponentInChildren<Text>();
-            t.text = value;
+            return;
         }
+        if (priority && value.Length == 0)
+        {
+            priority_displayed = false;
+        }
+        else
+        {
+            priority_displayed = priority;
+        }
+        if(value.Length == 0)
+        {
+            
+            SetDescriptionActive(false);
+            return;
+        }
+        SetDescriptionActive(true);
+        Text t = description_panel.GetComponentInChildren<Text>();
+        t.text = value;
     }
+
     Coroutine sda_routine = null;
     bool sda_to;
     void SetDescriptionActive(bool to)
@@ -260,4 +307,6 @@ public class UIControls : MonoBehaviour
         CloseShop();
         description_panel.SetActive(false);
     }
+
+
 }

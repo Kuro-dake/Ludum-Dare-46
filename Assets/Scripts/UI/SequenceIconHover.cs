@@ -28,8 +28,9 @@ public class SequenceIconHover : MonoBehaviour, IPointerEnterHandler, IPointerEx
         {
             sequence_mark = new GameObject("sequence mark");
             SpriteRenderer sr = sequence_mark.AddComponent<SpriteRenderer>();
-            sr.sprite = GM.square;
-            sr.color = Color.yellow;
+            sr.sprite = GM.ui.GetIcon("arrow");
+            sr.transform.localScale = Vector3.one * 2f;
+            sr.color = new Color(.6f,.6f,.9f) ;
         }
         if(c == null)
         {

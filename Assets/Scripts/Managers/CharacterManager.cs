@@ -6,8 +6,9 @@ using YamlDotNet.RepresentationModel;
 public class CharacterManager : MonoBehaviour
 {
     List<GameObject> target_marks = new List<GameObject>();
-    public void MarkTargets(List<Character> targets = null)
+    public void MarkTargets(List<Character> targets = null, Color c = new Color())
     {
+        c = c == Color.clear ? new Color(.8f,.6f,.6f): c;
         target_marks.ForEach(delegate (GameObject go) { Destroy(go); });
         target_marks.Clear();
         if (targets == null)
@@ -18,8 +19,9 @@ public class CharacterManager : MonoBehaviour
         {
             GameObject mark = new GameObject("mark");
             SpriteRenderer sr = mark.AddComponent<SpriteRenderer>();
-            sr.sprite = GM.circle;
-            sr.color = Color.magenta;
+            sr.sprite = GM.ui.GetIcon("arrow");
+            sr.color = c;
+            mark.transform.localScale = Vector3.one * 2f;
             mark.transform.SetParent(target.transform);
             mark.transform.localPosition = Vector2.up * 10f / target.transform.lossyScale.y;
             
@@ -233,7 +235,7 @@ public class CharacterManager : MonoBehaviour
     {
         doRandomCombinations();
         current_round_character_index = 5;
-
+        RefreshCurrentCharacterMarker();
     }
 
     public void NewTurn()
@@ -285,7 +287,7 @@ public class CharacterManager : MonoBehaviour
     private void RefreshCurrentCharacterMarker()
     {
         dev_turn_marker.SetParent(current_round_character.transform);
-        dev_turn_marker.localPosition = Vector3.up * 1.5f;
+        dev_turn_marker.localPosition = new Vector2(.2f, .6f);
     }
 
     public List<Character> GetNextTurnSequence()

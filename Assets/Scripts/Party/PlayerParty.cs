@@ -6,7 +6,7 @@ using UnityEngine;
 public class PlayerParty : Party
 {
     public static Dictionary<string, string> display_names = new Dictionary<string, string>() {
-        { "Warrior" , "Scabbard: the warrior" },
+        { "Warrior" , "Shield: the warrior" },
         { "Wizard" , "Sigil: the wizard" },
         { "Ranger" , "Dusk: the deceiver" },
         { "Gray" , "Gray: the demon" },
@@ -30,10 +30,11 @@ public class PlayerParty : Party
     void Update()
     {
         
-        /*if(anim != null)
+        foreach(Character c in members.members)
         {
-            anim.SetBool("moving", moving);
-        }*/
+            c.moving = moving;
+        }
+        
         
         moving = false;
 
@@ -55,7 +56,7 @@ public class PlayerParty : Party
             case direction.right:
                 moving = true;
                 transform.position += Vector3.right * Time.deltaTime * movement_speed;
-                GM.cine_cam.screenX = !orientation_right ? .35f : .05f;
+                GM.cine_cam.screenX = !orientation_right ? .35f : .35f;
                 
                
                 break;
@@ -82,7 +83,7 @@ public class PlayerParty : Party
         aim = new GameObject("aim").transform;
 
         SpriteRenderer sr = aim.gameObject.AddComponent<SpriteRenderer>();
-        sr.sprite = GM.circle;
+        sr.sprite = null;// GM.circle;
         sr.color = Color.green;
         sr.sortingLayerName = "UI";
         aim.localScale *= 1f;
@@ -93,7 +94,7 @@ public class PlayerParty : Party
         
         aim_parent.SetParent(transform);
         aim_parent.localPosition = Vector2.zero;
-        GM.cine_cam.target = aim;
+        GM.cine_cam.target = transform;
 
         string[] starting_order = new string[] { "Warrior", "Ranger", "Gray", "Wizard" };
         

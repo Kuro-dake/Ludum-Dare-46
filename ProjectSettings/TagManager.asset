@@ -40,8 +40,32 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Sky
+    uniqueID: 2925769817
+    locked: 0
+  - name: clouds
+    uniqueID: 2758678771
+    locked: 0
+  - name: env-2
+    uniqueID: 268510323
+    locked: 0
+  - name: Ground
+    uniqueID: 2922182549
+    locked: 0
+  - name: env-1
+    uniqueID: 400322895
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Characters
+    uniqueID: 1199034987
+    locked: 0
+  - name: env+1
+    uniqueID: 4118131699
+    locked: 0
+  - name: env+2
+    uniqueID: 507508419
     locked: 0
   - name: UI
     uniqueID: 77006033

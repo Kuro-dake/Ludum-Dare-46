@@ -121,9 +121,14 @@ public class UIControls : MonoBehaviour
             
             ShopItemData sid = ShopItemData.Parse(option);
 
-            sb.text = sid.character_name + " +" + sid.value + (sid.ability != null ? " "+sid.ability_name : "") + " " + sid.stat;
+            sb.text = sid.character.display_name 
+                + " +" + sid.value 
+                + (sid.ability != null ? " "+sid.ability_name : "") 
+                + " " + sid.stat 
+                + " for " + sid.price + " " + ShopItemData.resource_name;
 
-            //sb.char_icon.color = 
+            sb.char_icon.color = sid.character.GetComponent<SpriteRenderer>().color;
+            sb.price = sid.price;
             sb.button.onClick.AddListener(delegate {
                 ShopItemData sidin = ShopItemData.Parse(option);
                 Debug.Log(sidin.ToString());
@@ -135,6 +140,7 @@ public class UIControls : MonoBehaviour
 
     private class ShopItemData
     {
+        public const string resource_name = "demon essence";
         public string character_name;
         public Character character;
         public string ability_name;

@@ -221,7 +221,7 @@ public class CharacterManager : MonoBehaviour
             {
                 randomCombinations += "\n";
             }
-            int num = Random.Range(0, 2) == 1 ? Random.Range(2, 5) : 4;
+            int num = Random.Range(0, 2) == 1 ? 4 : 4;
             randomCombinations += current_x.ToString() + "-encounter:";
             for (int i = 0; i < num; i++)
             {

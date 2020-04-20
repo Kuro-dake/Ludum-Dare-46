@@ -97,6 +97,10 @@ public class DialogueManager : MonoBehaviour
         {
             GM.devout_visible = !value;
             gameObject.SetActive(value);
+            if (!value)
+            {
+                GM.game.combat_ended = Time.time;
+            }
            // GM.canvas.SetActive(!value);
         }
     }

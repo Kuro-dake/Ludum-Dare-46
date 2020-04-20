@@ -15,11 +15,12 @@ public class GameManager : MonoBehaviour
     public ResourcePickup GeneratePickup(Vector2 where, int amount)
     {
         ResourcePickup rp = Instantiate(pickup_prefab);
-        rp.transform.SetParent(GM.scenery.env_parallax);
+        rp.transform.SetParent(GM.scenery.transform.Find("pickup_parallax"));
         rp.transform.position = where;
         rp.Play(amount);
         return rp;
     }
+    public bool game_over = false;
     public game_phase phase {
         get
         {
@@ -44,6 +45,7 @@ public class GameManager : MonoBehaviour
     
     public void UpdateDevout()
     {
+        GM.devout.text = _display_resources.ToString();
         return;
         GM.devoutright.text = "";
         if (GM.dev_options.hide_dev_text_output)
@@ -140,6 +142,7 @@ public class GameManager : MonoBehaviour
     }
 
     Coroutine combat_routine = null;
+    public bool is_combat_runnig { get { return combat_routine != null; } }
     public EnemyParty current_enemy_party;
     public Coroutine StartCombat(EnemyParty party)
     {
@@ -181,11 +184,13 @@ public class GameManager : MonoBehaviour
             {
                 yield return null;
             }
+            yield return new WaitForSeconds(.7f);
             yield return GM.characters.NextCharacterTurn();
+            
             yield return null;
 
         }
-        combat_routine = null;
+        
         GM.cine_cam.target = GM.party.transform;
         Destroy(current_enemy_party.gameObject);
         GM.party.members.members.ForEach(delegate (Character c)
@@ -193,6 +198,28 @@ public class GameManager : MonoBehaviour
             c.ClearBuffs();
         });
         GM.ui.HideSequence();
+        combat_ended = Time.time;
+        combat_routine = null;
+
+        Flash.DoFlash(GM.party["Wizard"].gameObject);
+        foreach(Character c in GM.party.members.members)
+        {
+            if(c.name == "Wizard")
+            {
+                continue;
+            }
+            c.Shake();
+
+            c.Heal(100);
+            c.gameObject.AddComponent<Fader>().FadeIn();
+        }
+        GM.audio_manager.PlaySound("hit");
+
+    }
+    public float combat_ended = 0f;
+    private void Start()
+    {
+        combat_ended = Time.time;
     }
 
     Coroutine display_amount_routine = null;
@@ -235,7 +262,7 @@ public class GameManager : MonoBehaviour
             _display_resources += increment * (increase ? 1 : -1);
             if (res_as == null)
             {
-                //res_as = GM.audio_manager.PlaySound("pickup");
+                res_as = GM.audio_manager.PlaySound("pickup");
             }
             if (res_as != null)
             {

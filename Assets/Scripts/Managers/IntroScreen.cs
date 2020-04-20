@@ -116,17 +116,11 @@ public class IntroScreen : MonoBehaviour
             //StartGame();
         }
     }
-
+    [SerializeField]
+    GameObject intro;
     void StartGame()
     {
-        game.SetActive(true);
-        GM gm = game.GetComponentInChildren<GM>(true);
-        List<Transform> game_children = new List<Transform>();
-        for (int i = 0; i < game.transform.childCount; i++)
-        {
-            game_children.Add(game.transform.GetChild(i));
-        }
-        
-        gm.Initialize();
+        intro.SetActive(true);
+        Destroy(gameObject);
     }
 }

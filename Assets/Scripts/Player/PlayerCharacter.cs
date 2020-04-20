@@ -105,5 +105,12 @@ public class PlayerCharacter : Character
         }
     }
 
-    
+    protected override void OnDeath()
+    {
+        if(name == "Gray")
+        {
+            GM.ui.GameOver();
+        }
+    }
+
 }

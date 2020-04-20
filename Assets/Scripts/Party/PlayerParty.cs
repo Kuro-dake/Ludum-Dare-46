@@ -8,7 +8,7 @@ public class PlayerParty : Party
     public static Dictionary<string, string> display_names = new Dictionary<string, string>() {
         { "Warrior" , "Shield: the warrior" },
         { "Wizard" , "Sigil: the wizard" },
-        { "Ranger" , "Dusk: the deceiver" },
+        { "Ranger" , "Nightfall: the deceiver" },
         { "Gray" , "Gray: the demon" },
     };
     // Update is called once per frame
@@ -27,9 +27,26 @@ public class PlayerParty : Party
     Transform _sa_parent;
     Transform sa_parent { get { return _sa_parent != null ? _sa_parent : (_sa_parent = transform.Find("sa_parent")); } }
     
+    
+
     void Update()
     {
-        
+
+        if (GM.game.combat_ended + 1f > Time.time || GM.cinema.active || GM.ui.shop_open || GM.game.is_combat_runnig || GM.game.game_over)
+        {
+            moving = false;
+            foreach (Character c in members.members)
+            {
+                c.moving = moving;
+            }
+            return;
+        }
+
+        if(GM.game.phase == game_phase.movement)
+        {
+            Movement(direction.right);
+        }
+
         foreach(Character c in members.members)
         {
             c.moving = moving;

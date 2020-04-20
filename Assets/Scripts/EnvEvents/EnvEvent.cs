@@ -24,15 +24,22 @@ public abstract class EnvEvent : MonoBehaviour
         if(Mathf.Abs(transform.position.x - GM.party.transform.position.x) < 5f)
         {
             activated = true;
-            PlayEvent();
+            StartCoroutine(DialogueAndEvent());
         }
+    }
+
+    IEnumerator DialogueAndEvent()
+    {
+        if (dialogue.Length > 0)
+        {
+            yield return GM.cinema.PlayDialogue(dialogue);
+        }
+        GM.game.combat_ended = Time.time;
+        PlayEvent();
     }
 
     protected virtual void PlayEvent()
     {
-        if (dialogue.Length > 0)
-        {
-            GM.cinema.PlayDialogue(dialogue);
-        }
+        
     }
 }

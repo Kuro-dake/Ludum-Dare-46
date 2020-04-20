@@ -51,7 +51,7 @@ public class Fader : MonoBehaviour
             });
             yield return null;
         }
-        
+        Destroy(this);
     }
       
 

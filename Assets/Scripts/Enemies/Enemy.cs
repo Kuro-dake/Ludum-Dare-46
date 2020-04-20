@@ -27,7 +27,7 @@ public class Enemy : Character
     public Ability GetRandomAvailableAbility()
     {
         List<Ability> pick = character_abilities.FindAll(delegate (Ability a) {
-            return a.from_positions.Contains(position);
+            return a.from_positions_bypass.Contains(position);
         });
         if(pick.Count == 0)
         {
@@ -82,7 +82,7 @@ public class Enemy : Character
             
             has_finished_acting = true;
             yield return null;
-            yield return new WaitForSeconds(1f);
+            
         }
         
         Debug.Log(name + " finishing round");

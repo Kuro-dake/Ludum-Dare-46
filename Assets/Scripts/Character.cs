@@ -156,7 +156,7 @@ public abstract class Character : MonoBehaviour
     public Animator anim { get { return _anim != null ? _anim : (_anim = GetComponent<Animator>()); } }
 
     Coroutine shake_routine;
-    Coroutine Shake()
+    public Coroutine Shake()
     {
         if (shake_routine != null)
         {
@@ -170,7 +170,7 @@ public abstract class Character : MonoBehaviour
         {
             yield break;
         }
-        float duration = .2f;
+        float duration = .6f;
         while ((duration -= Time.deltaTime) > 0f)
         {
             sprite_transform.localPosition = UnityEngine.Random.insideUnitCircle * duration * 2f;
@@ -310,9 +310,13 @@ public abstract class Character : MonoBehaviour
         {
             return ret; 
         }
+        ret.RemoveAll(delegate (Ability a)
+        {
+            return a.target_number != 1;
+        });
         return ret.FindAll(delegate (Ability a)
         {
-            return a.from_positions.Contains(position) && a.target_positions.Contains(c.position) && a.target_number == 1;
+            return a.from_positions_bypass.Contains(position) && a.target_positions.Contains(c.position) && a.target_number == 1;
         });
     }
 

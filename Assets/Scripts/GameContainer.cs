@@ -43,6 +43,10 @@ public class GameContainer : MonoBehaviour
             Reboot();
         }
     }
+    public static void ReloadGame()
+    {
+        inst.Reboot();
+    }
     void Reboot()
     {
         StartCoroutine(RebootStep());

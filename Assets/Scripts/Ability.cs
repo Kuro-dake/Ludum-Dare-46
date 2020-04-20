@@ -30,6 +30,14 @@ public class Ability
     public string name;
     public string sprite_name;
     public List<int> from_positions = new List<int>();
+    public List<int> from_positions_bypass
+    {
+        get
+        {
+            return new List<int>() { 0, 1, 2, 3 };
+        }
+    }
+    
     public target_type target_type;
     [SerializeField]
     int damage = 1;
@@ -88,6 +96,7 @@ public class Ability
 
     public void ApplyAbility(Character target)
     {
+        Flash.DoFlash(owner.gameObject);
         if (special_action != null)
         {
             special_action();
@@ -110,7 +119,7 @@ public class Ability
         int dmg = damage > 0 ? GetDamage(owner.buffs) : 0;
         if (dmg > 0)
         {
-            ret += "\nDealt " + damage + " damage\n";
+            ret += "\nDealt " + dmg + " damage\n";
             target.Hit(dmg);
         }
         int hpplus = heal;
@@ -125,6 +134,7 @@ public class Ability
         }
         Debug.Log(ret);
         owner.SpendAP();
+        
 
     }
     public override string ToString()
@@ -134,7 +144,8 @@ public class Ability
         int dmg = damage;
         if (dmg > 0)
         {
-            ret += "Deals " + damage + " damage";
+            dmg = GetDamage(owner.buffs);
+            ret += "Deals " + dmg + " damage";
 
         }
         int hpplus = heal;
@@ -189,7 +200,7 @@ public class Ability
             ret += " for " + rounds;
         }
 
-        return name + (ret.Length > 0 ? ": " + ret : "");
+        return name + (ret.Length > 0 ? "\n" + ret : "");
     }
 
     public List<Character> TargetCharacters(List<int> poss = null)

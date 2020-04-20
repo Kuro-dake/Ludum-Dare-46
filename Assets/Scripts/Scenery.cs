@@ -39,8 +39,14 @@ public class Scenery : MonoBehaviour
             p.CheckActive();
         }
     }
+    bool first_update = true;
     void UpdateParallax()
     {
+        if (first_update)
+        {
+            first_update = false;
+            return;
+        }
         foreach (Parallax p in GetComponentsInChildren<Parallax>(true))
         {
             p.x = x;

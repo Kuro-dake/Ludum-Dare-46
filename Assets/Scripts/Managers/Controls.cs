@@ -62,7 +62,7 @@ public class Controls : MonoBehaviour
             }
             
 
-            GM.party.Movement(d);
+            //GM.party.Movement(d);
             
         
         

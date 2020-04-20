@@ -1,0 +1,3 @@
+none;l:You won. Congratulations. Keep playing if you'd like.
+
+Made by Kuro/Dizztal for Ludum Dare 46 Compo

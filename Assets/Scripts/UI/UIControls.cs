@@ -42,21 +42,21 @@ public class UIControls : MonoBehaviour
     public void ShowAbilityButtons(Character target, List<Ability> abilities)
     {
         int i = 0;
-        float step = 85f;
+        float step = 65f;
         float start = step * (abilities.Count - 1) * -.5f;
-        
-            
-            
-        foreach(Ability a in abilities)
+
+
+
+        foreach (Ability a in abilities)
         {
             Button b = Instantiate(button_prefab);
             b.transform.SetParent(ability_buttons);
-            b.GetComponent<RectTransform>().localPosition = GetCharacterCanvasPosition(target) + Vector2.right * (i++ * step + start) + Vector2.down * 2f; 
-            
+            b.GetComponent<RectTransform>().localPosition = GetCharacterCanvasPosition(target) + Vector2.right * (i++ * step + start) + Vector2.down * 2f;
+
             b.GetComponent<ButtonDescription>().description = a.ToString();
             Image img = b.transform.Find("Image").GetComponent<Image>();
             img.sprite = GetIcon(a.sprite_name);
-            
+
             b.onClick.AddListener(delegate {
                 a.ApplyAbility(target);
                 HideAbilityButtons();
@@ -66,22 +66,22 @@ public class UIControls : MonoBehaviour
     }
 
     public void ShowGlobalAbilityButtons(List<Ability> abilities)
-    { 
+    {
         int i = 0;
         foreach (Ability a in abilities)
         {
-            if (a.target_number < 2 && (a.target_type == target_type.enemy || a.target_type == target_type.ally))
+            if (a.target_number < 2 && (a.target_type == target_type.enemy || a.target_type == target_type.ally || a.target_type == target_type.self))
             {
                 continue;
             }
             Button b = Instantiate(button_prefab);
             b.transform.SetParent(global_ability_buttons);
             RectTransform rt = b.GetComponent<RectTransform>();
-            rt.anchorMax = Vector2.up; 
+            rt.anchorMax = Vector2.up;
             rt.anchorMin = Vector2.up;
             rt.pivot = Vector2.up;
-            rt.localPosition = (Vector2.down * 85f * (++i)) + Vector2.right * 35;
-            
+            rt.localPosition = (Vector2.down * 65 * (++i)) + Vector2.right * 35;
+
             b.GetComponent<ButtonDescription>().description = a.ToString();
             b.transform.Find("Image").GetComponent<Image>().sprite = GetIcon(a.sprite_name);
             b.onClick.AddListener(delegate {
@@ -99,7 +99,7 @@ public class UIControls : MonoBehaviour
         List<Character> nts = GM.characters.GetNextTurnSequence();
         int i = 0;
         float step = 70f;
-        float start = step * (nts.Count -1) * -.5f;
+        float start = step * (nts.Count - 1) * -.5f;
         foreach (Character c in nts)
         {
             Image iicon = Instantiate(sequence_icon_prefab);
@@ -126,14 +126,16 @@ public class UIControls : MonoBehaviour
     {
         global_ability_buttons.DestroyChildren();
     }
-    
-    
+
+
 
     [SerializeField]
     ShopButton shop_button_prefab = null;
     public float shop_button_margin = 250f;
+    public bool shop_open = false;
     public void OpenShop(string option_string)
     {
+        shop_open = true;
         shop_display.gameObject.SetActive(true);
         option_string = option_string.Trim();
         string[] options = option_string.Split(new char[] { '+' }, System.StringSplitOptions.RemoveEmptyEntries);
@@ -142,24 +144,23 @@ public class UIControls : MonoBehaviour
         float step = shop_button_margin;
         float start = step * (num - 1) * -.5f;
         int i = 0;
-        foreach(string option in options)
+        foreach (string option in options)
         {
             Vector2 pos = Vector2.right * (step * i++ + start);
             ShopButton sb = Instantiate(shop_button_prefab, shop_display_buttons, false);
-            
+
             RectTransform rt = sb.GetComponent<RectTransform>();
             rt.localPosition = pos;
-            
+
             ShopItemData sid = ShopItemData.Parse(option);
             sb.button_image.sprite = GetIcon(sid.ability != null ? sid.ability.sprite_name : sid.stat);
-            sb.text = sid.character.display_name 
-                + " +" + sid.value 
-                + (sid.ability != null ? " "+sid.ability_name : "") 
-                + " " + sid.stat 
-                + " for " + sid.price + " " + ShopItemData.resource_name;
+            sb.text = sid.character.display_name
+                + "\n +" + sid.value
+                + (sid.ability != null ? " " + sid.ability_name : "")
+                + " " + sid.stat;
 
-            sb.char_icon.sprite = GetIcon(sid.character.icon_name); 
-            
+            sb.char_icon.sprite = GetIcon(sid.character.icon_name);
+
             sb.price = sid.price;
             sb.button.onClick.AddListener(delegate {
                 ShopItemData sidin = ShopItemData.Parse(option);
@@ -181,7 +182,7 @@ public class UIControls : MonoBehaviour
         public int value;
         public int price;
 
-        static List<string> stat_names = new List<string>() { 
+        static List<string> stat_names = new List<string>() {
             "maxhp","defense","initiative"
         };
 
@@ -192,14 +193,14 @@ public class UIControls : MonoBehaviour
 
         public bool Apply()
         {
-            if(GM.game.resources < price)
+            if (GM.game.resources < price)
             {
                 return false;
             }
 
             GM.game.resources -= price;
 
-            if(ability != null)
+            if (ability != null)
             {
                 ability.ModifiyStat(stat, value);
             }
@@ -217,7 +218,7 @@ public class UIControls : MonoBehaviour
 
             string[] data_frag = data.Split(new char[] { '/' }, System.StringSplitOptions.RemoveEmptyEntries);
 
-            for(int i = 0; i < data_frag.Length; i++)
+            for (int i = 0; i < data_frag.Length; i++)
             {
                 data_frag[i] = data_frag[i].Trim();
             }
@@ -228,7 +229,7 @@ public class UIControls : MonoBehaviour
             {
                 ret.ability_name = data_frag[1];
                 ret.ability = ret.character.GetAbilityByName(ret.ability_name);
-                if(ret.ability == null)
+                if (ret.ability == null)
                 {
                     throw new UnityException("Non extistent shop item " + ret.ability_name);
                 }
@@ -255,13 +256,15 @@ public class UIControls : MonoBehaviour
     {
         shop_display_buttons.DestroyChildren();
         shop_display.gameObject.SetActive(false);
+        shop_open = false;
+        GM.game.combat_ended = Time.time;
     }
     [SerializeField]
     GameObject description_panel = null;
     bool priority_displayed = false;
-    public void SetDescription(string value, bool priority = false) 
+    public void SetDescription(string value, bool priority = false)
     {
-        
+
         if (priority_displayed && !priority)
         {
             return;
@@ -274,9 +277,9 @@ public class UIControls : MonoBehaviour
         {
             priority_displayed = priority;
         }
-        if(value.Length == 0)
+        if (value.Length == 0)
         {
-            
+
             SetDescriptionActive(false);
             return;
         }
@@ -289,7 +292,7 @@ public class UIControls : MonoBehaviour
     bool sda_to;
     void SetDescriptionActive(bool to)
     {
-        if(sda_routine != null && !sda_to)
+        if (sda_routine != null && !sda_to)
         {
             StopCoroutine(sda_routine);
         }
@@ -308,5 +311,34 @@ public class UIControls : MonoBehaviour
         description_panel.SetActive(false);
     }
 
+
+    public void GameOver()
+    {
+        GM.game.game_over = true;
+        gameover_panel.gameObject.SetActive(true);
+        StartCoroutine(GameOverStep());
+    }
+    [SerializeField]
+    Transform gameover_panel;
+    Image go_image { get { return gameover_panel.GetComponent<Image>(); } }
+    Text go_text { get { return gameover_panel.GetComponentInChildren<Text>(); } }
+    IEnumerator GameOverStep()
+    {
+        while(go_image.color.a < 1f)
+        {
+            go_image.color += Color.black * Time.deltaTime;
+            go_text.color = go_image.color;
+            yield return null;
+        }
+        yield return new WaitForSeconds(3f);
+        while (go_image.color.a > 0f)
+        {
+            go_image.color -= Color.black * Time.deltaTime;
+            go_text.color = go_image.color;
+            yield return null;
+        }
+        yield return new WaitForSeconds(1f);
+        GameContainer.ReloadGame();
+    }
 
 }

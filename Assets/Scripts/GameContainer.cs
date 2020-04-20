@@ -8,18 +8,18 @@ public class GameContainer : MonoBehaviour
 {
     [SerializeField]
     GameObject game = null;
-    [SerializeField]
     GameObject _game_inst = null;
     static GameContainer inst;
     public static GameObject game_inst { get { return inst._game_inst; } }
     SavedPosition checkpoint;
     GM gm { get { return GetComponentInChildren<GM>(); } }
+    GameObject gm_parent { get { return gm.transform.parent.gameObject; } }
     public static void SaveData()
     {
         inst.checkpoint = new SavedPosition();
         inst.checkpoint.Save();
     }
-    bool boot_on_start = true;
+    
     int init_state = 76137515;
     [SerializeField]
     bool load_game_from_file = false;
@@ -27,19 +27,17 @@ public class GameContainer : MonoBehaviour
     {
         
         inst = this;
-        if (boot_on_start)
+        if (load_game_from_file)
         {
-            if (load_game_from_file)
-            {
-                LoadFromFile();
-            }
+            LoadFromFile();
+            
             Reboot();
         }
         else
         {
             if(gm != null)
             {
-                _game_inst = gm.transform.parent.gameObject;
+                _game_inst = gm_parent;
                 gm.Initialize();
             }
         }

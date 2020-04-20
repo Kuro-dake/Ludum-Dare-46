@@ -116,6 +116,9 @@ public class Scenery : MonoBehaviour
                 case "env":
                     GM.level_manager.SpawnObject(pars[1]);
                     break;
+                default:
+                    throw new UnityException("Unknown tag " + pars[0]);
+                    
             }
         }
 

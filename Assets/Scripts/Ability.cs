@@ -23,7 +23,7 @@ public class Ability
                 break;
         }
     }
-
+    [System.NonSerialized]
     public Character owner;
     [System.NonSerialized]
     public Color ability_color = Color.white;
@@ -57,7 +57,7 @@ public class Ability
         heal = 0;
     }
     System.Action special_action = null;
-    public List<int> GetTargetsForAI()
+    public List<int> GetTargetPositionsForAI()
     {
         List<int> ret = new List<int>(target_positions);
         ret.Shuffle();
@@ -109,7 +109,7 @@ public class Ability
             ret += "No target provided for " + name + " ability\n";
             return;
         }
-        if (!target.alive)
+        if (!target.is_alive)
         {
             ret += "Target " + target.name + " is not alive";
             return;
@@ -200,7 +200,7 @@ public class Ability
             ret += " for " + rounds;
         }
 
-        return name + (ret.Length > 0 ? "\n" + ret : "");
+        return "<b>"+name+"</b>" + (ret.Length > 0 ? "\n" + ret : "");
     }
 
     public List<Character> TargetCharacters(List<int> poss = null)
@@ -209,30 +209,59 @@ public class Ability
         {
             poss = target_positions;
         }
+        List<Character> ret = new List<Character>();
         switch (target_type)
         {
             case target_type.self:
-                return new List<Character>() { owner };
+                ret.Add( owner );
+                break;
                 
             case target_type.ally:
-                return poss.ConvertAll<Character>(delegate (int pos) {
-                    return owner.party.members.members_positions[pos];
+                ret = poss.ConvertAll<Character>(delegate (int pos) {
+                    return owner.party[pos];
                 });
+                break;
                 
             case target_type.enemy:
-                return poss.ConvertAll<Character>(delegate (int pos) {
-                    return owner.opposing_party.members.members_positions[pos];
+                ret =  poss.ConvertAll<Character>(delegate (int pos) {
+                    return owner.opposing_party[pos];
                 });
+                break;
                 
         }
-        return new List<Character>();
+        ret.RemoveAll(delegate (Character c) { return c == null; });
+        return ret;
     }
+    bool EvalRightPosition(int pos, List<int> positions, Party party) {
+        if (positions.Contains(pos))
+        {
+            return true;
+        }
+        pos -= party.members.alive_members.Count;
+        return positions.Contains(pos);
+    }
+    public bool CanUseFromPosition(int pos)
+    {
+        return EvalRightPosition(pos, from_positions_bypass, owner.party);
+    }
+
+    public bool CanUseAtPosition(int pos)
+    {
+        return EvalRightPosition(pos, target_positions, target_type == target_type.enemy ? owner.opposing_party : owner.party);
+    }
+
 }
+
+
 [System.Serializable]
-public class NamedBuffEffect : Pair<buff_type, int>
+public class NamedBuffEffect
 {
-    public NamedBuffEffect(buff_type b, int i) : base(b, i) { }
+    public buff_type first;
+    public int second;
+
+    public NamedBuffEffect(buff_type b, int i) { first = b;second = i; }
 }
+
 public enum buff_type
 {
     damage,
@@ -242,7 +271,6 @@ public enum buff_type
     initiative
 }
 [System.Serializable]
-
 public struct Buff
 {
     public List<NamedBuffEffect> effects;

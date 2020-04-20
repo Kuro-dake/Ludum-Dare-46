@@ -93,8 +93,15 @@ public class GM : MonoBehaviour
 
     public DevOptions _dev_options = new DevOptions();
     public static DevOptions dev_options { get { return inst._dev_options; } }
+    bool initialized = false;
     public void Initialize()
     {
+        Debug.Log("Initializing GM");
+        if (initialized)
+        {
+            throw new UnityException("The GM was already initialized.");
+        }
+        initialized = true;
         _inst = GameObject.Find("GM").GetComponent<GM>();
         game.LoadLevelParams(1);
         
@@ -113,7 +120,30 @@ public class GM : MonoBehaviour
         ui.Initialize();
     }
 
-    
+   
+    public static bool can_show_description
+    {
+        get
+        {
+            return !cinema.active && !game.game_over;
+        }
+    }
+    public static bool can_show_ability_buttons
+    {
+        get
+        {
+            
+            return !cinema.active && !ui.shop_open && !game.game_over;
+        }
+    }
+
+    public static bool can_walk
+    {
+        get
+        {
+            return game.combat_ended < Time.time + 1f && !cinema.active && !ui.shop_open && !game.is_combat_runnig && !game.game_over;
+        }
+    }
 
     private void Update()
     {

@@ -17,7 +17,7 @@ public class Members : MonoBehaviour
     {
         get
         {
-            return members.FindAll(delegate(Character c){ return c.alive; });
+            return members.FindAll(delegate(Character c){ return c.is_alive; });
 
         }
     }
@@ -25,16 +25,31 @@ public class Members : MonoBehaviour
     {
         get
         {
-            return members.FindAll(delegate (Character c) { return !c.alive; });
+            return members.FindAll(delegate (Character c) { return !c.is_alive; });
 
         }
     }
-    public Dictionary<int, Character> members_positions
+    public Character this[int n]
+    {
+        get
+        {
+            if (n < 0)
+            {
+                n += members_positions.Count;
+            }
+            if (!members_positions.ContainsKey(n))
+            {
+                return null;
+            }
+            return members_positions[n];
+        }
+    }
+    Dictionary<int, Character> members_positions
     {
         get
         {
             Dictionary<int, Character> ret = new Dictionary<int, Character>();
-            foreach(Character c in members)
+            foreach(Character c in alive_members)
             {
                 ret.Add(c.position, c);
             }

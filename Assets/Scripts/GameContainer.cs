@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 public class GameContainer : MonoBehaviour
 {
     [SerializeField]
     GameObject game = null;
+    [SerializeField]
     GameObject _game_inst = null;
     static GameContainer inst;
     public static GameObject game_inst { get { return inst._game_inst; } }
@@ -18,12 +21,18 @@ public class GameContainer : MonoBehaviour
     }
     bool boot_on_start = true;
     int init_state = 76137515;
+    [SerializeField]
+    bool load_game_from_file = false;
     private void Start()
     {
         
         inst = this;
-        if (boot_on_start && gm == null)
+        if (boot_on_start)
         {
+            if (load_game_from_file)
+            {
+                LoadFromFile();
+            }
             Reboot();
         }
         else
@@ -51,6 +60,17 @@ public class GameContainer : MonoBehaviour
     {
         StartCoroutine(RebootStep());
     }
+
+    void LoadFromFile()
+    {
+        if (File.Exists(SavedPosition.filename))
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream file = File.Open(SavedPosition.filename, FileMode.Open);
+            checkpoint = (SavedPosition)bf.Deserialize(file);
+        }
+    }
+
     IEnumerator RebootStep()
     {
         if(_game_inst != null)
@@ -91,6 +111,13 @@ public class GameContainer : MonoBehaviour
 [System.Serializable]
 public class SavedPosition
 {
+
+    public const string FILE_SAVE_NAME = "save.dat";
+    public static string filename
+        {
+            get { return Application.persistentDataPath + FILE_SAVE_NAME; }
+        }
+
     public float x;
     public bool show_enemy_targets;
     public int resources;
@@ -106,6 +133,12 @@ public class SavedPosition
         {
             characters.Add(new SavedCharacter(c));
         }
+
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream file = File.Create(filename);
+
+        bf.Serialize(file, this);
+        file.Close();
     }
 
 }
@@ -125,7 +158,9 @@ public class SavedCharacter
     public SavedCharacter(Character c)
     {
         c.WriteSaveData(this);
+        
 
     }
 
 }
+

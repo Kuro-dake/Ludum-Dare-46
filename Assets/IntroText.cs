@@ -13,8 +13,6 @@ public class IntroText : MonoBehaviour
             game.gameObject.SetActive(true);
             GM gm = game.GetComponentInChildren<GM>(true);
 
-            gm.Initialize();
-
             Destroy(gameObject);
         }
     }

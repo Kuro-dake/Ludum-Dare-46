@@ -35,6 +35,7 @@ public class Enemy : Character
         }
         return character_abilities[UnityEngine.Random.Range(0, character_abilities.Count)];
     }
+    
     public override void StartTurn()
     {
         PrepareRandomAction();
@@ -45,7 +46,7 @@ public class Enemy : Character
         if (use_this_round == null || force)
         {
             use_this_round = GetRandomAvailableAbility();
-            targets = use_this_round == null ? new List<int>() : use_this_round.GetTargetsForAI();
+            targets = use_this_round == null ? new List<int>() : use_this_round.GetTargetPositionsForAI();
         }
     }
     public override Coroutine StartRound()
@@ -88,11 +89,27 @@ public class Enemy : Character
         Debug.Log(name + " finishing round");
         
     }
-    protected override void OnMouseEnter()
+    bool showing_next_targets = false;
+    protected override void OnMouseOver()
     {
-        base.OnMouseEnter();
-        DisplayNextTargets();
         
+        base.OnMouseOver();
+        if (!showing_next_targets) {
+            showing_next_targets = true;
+            DisplayNextTargets();
+        }
+        
+        
+    }
+
+    protected override void OnMouseExit()
+    {
+        if (showing_next_targets)
+        {
+            showing_next_targets = false;
+            GM.characters.MarkTargets();
+        }
+        base.OnMouseExit();
     }
 
     public void DisplayNextTargets()

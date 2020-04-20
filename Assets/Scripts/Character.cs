@@ -65,7 +65,7 @@ public abstract class Character : MonoBehaviour
     [SerializeField]
     int _defense;
     public int defense { get { return _defense + GetBuffsValue(buff_type.defense); } }
-    public bool alive
+    public bool is_alive
     {
         get { return hp > 0; }
     }
@@ -137,6 +137,7 @@ public abstract class Character : MonoBehaviour
         hp = max_hp;
         anim_multiplier = UnityEngine.Random.Range(.8f, 1.2f);
         anim.speed = .1f * anim_multiplier;
+        var ca = character_abilities; 
     }
 
     public void ApplyBuff(Buff b)
@@ -185,13 +186,13 @@ public abstract class Character : MonoBehaviour
     }
     public virtual void Hit(int damage)
     {
-        if (!alive)
+        if (!is_alive)
         {
             return;
         }
         Shake();
         ReceiveDamage(damage);
-        if (!alive)
+        if (!is_alive)
         {
             sr.gameObject.AddComponent<Fader>().FadeOut();
             party.members.OnCharacterDeath(this);
@@ -266,19 +267,20 @@ public abstract class Character : MonoBehaviour
         GoToPosition(npos);
     }
 
-    protected virtual void OnMouseEnter()
+   
+    protected virtual void OnMouseExit()
     {
-        GM.ui.ShowAbilityButtons(this, GM.game.current_round_character.GetAvailableAbilitiesFor(this));
+        GM.ui.HideAbilityButtons(this);
+        GM.ui.info_panel.HideCharacterDescription(this);
     }
-    private void OnMouseExit()
+    protected virtual void OnMouseOver()
     {
-        GM.ui.HideAbilityButtons();
-        GM.characters.MarkTargets();
-        GM.ui.SetDescription("");
-    }
-    private void OnMouseOver()
-    {
-        GM.ui.SetDescription(ToString());
+        if (GM.can_show_ability_buttons && is_alive)
+        {
+            GM.ui.ShowAbilityButtons(this);
+            GM.ui.info_panel.ShowCharacterDescription(this);
+            
+        }
     }
     protected target_type GetTargetType(Character c)
     {
@@ -316,7 +318,7 @@ public abstract class Character : MonoBehaviour
         });
         return ret.FindAll(delegate (Ability a)
         {
-            return a.from_positions_bypass.Contains(position) && a.target_positions.Contains(c.position) && a.target_number == 1;
+            return a.CanUseFromPosition(position) && a.CanUseAtPosition(c.position) && a.target_number == 1;
         });
     }
 

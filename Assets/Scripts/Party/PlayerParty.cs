@@ -32,7 +32,7 @@ public class PlayerParty : Party
     void Update()
     {
 
-        if (GM.game.combat_ended + 1f > Time.time || GM.cinema.active || GM.ui.shop_open || GM.game.is_combat_runnig || GM.game.game_over)
+        if (!GM.can_walk)
         {
             moving = false;
             foreach (Character c in members.members)
@@ -42,7 +42,7 @@ public class PlayerParty : Party
             return;
         }
 
-        if(GM.game.phase == game_phase.movement)
+        if(GM.game.phase == game_phase.movement && Input.GetKey(KeyCode.Mouse1))
         {
             Movement(direction.right);
         }
@@ -118,6 +118,7 @@ public class PlayerParty : Party
         for (int i = 0; i < starting_order.Length; i++)
         {
             Character c = members.transform.Find(starting_order[i]).GetComponent<Character>();
+            
             c.position = i;
             
         }

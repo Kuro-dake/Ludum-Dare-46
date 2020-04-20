@@ -1,0 +1,7 @@
+1010-env:resources;1000;first_resources
+13-encounter:goblin2;goblin2;goblin1;goblin2
+1000-env:checkpoint;;first_checkpoint
+2-env:shop;Warrior/maxhp/10/50+Ranger/Throw knife/damage/2/100+Wizard/Lightning/damage/2/200+Wizard/Heal/heal/2/300;first_shop
+
+
+265-dialogue:second_encounter|encounter:weakling;weakling;weakling;weakling|dialogue:second_encounter_end

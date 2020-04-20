@@ -5,6 +5,7 @@ using UnityEngine;
 using YamlDotNet.RepresentationModel;
 public class CharacterManager : MonoBehaviour
 {
+    public bool speedup_wizard_dev = false;
     List<GameObject> target_marks = new List<GameObject>();
     public void MarkTargets(List<Character> targets = null, Color c = new Color())
     {
@@ -17,19 +18,26 @@ public class CharacterManager : MonoBehaviour
         }
         foreach(Character target in targets)
         {
-            GameObject mark = new GameObject("mark");
-            SpriteRenderer sr = mark.AddComponent<SpriteRenderer>();
-            sr.sprite = GM.ui.GetIcon("arrow");
-            sr.color = c;
-            mark.transform.localScale = Vector3.one * 2f;
-            mark.transform.SetParent(target.transform);
-            mark.transform.localPosition = Vector2.up * 10f / target.transform.lossyScale.y;
-            
-            target_marks.Add(mark);
-
+            target_marks.Add(CreateMark(target.transform,c));
         }
     }
 
+    public GameObject CreateMark(Transform target, Color c)
+    {
+        GameObject mark = new GameObject("mark");
+        SpriteRenderer sr = mark.AddComponent<SpriteRenderer>();
+        sr.sprite = GM.ui.GetIcon("arrow");
+        sr.color = c;
+        sr.sortingLayerName = "UI";
+        mark.transform.localScale = Vector3.one * ARROW_SCALE_MULTIPLIER;
+        mark.transform.SetParent(target);
+        mark.transform.localPosition = Vector2.up * ARROW_UP_MULTIPLIER / target.lossyScale.y;
+        mark.AddComponent<Arrow>();
+        return mark;
+    }
+
+    public const float ARROW_UP_MULTIPLIER = 10f;
+    public const float ARROW_SCALE_MULTIPLIER = 2.5f;
     public NamedObjects named_enemies = new NamedObjects();
     [SerializeField]
     List<EnemyData> enemy_data = new List<EnemyData>();
@@ -103,7 +111,7 @@ public class CharacterManager : MonoBehaviour
     List<Character> _all_characters = new List<Character>();
     public List<Character> alive_characters
     {
-        get { return all_characters.FindAll(delegate (Character en) { return en.alive; }); }
+        get { return all_characters.FindAll(delegate (Character en) { return en.is_alive; }); }
     }
     public List<Enemy> alive_enemies
     {
@@ -221,7 +229,7 @@ public class CharacterManager : MonoBehaviour
             {
                 randomCombinations += "\n";
             }
-            int num = Random.Range(0, 2) == 1 ? 4 : 4;
+            int num = Random.Range(0, 2) == 1 ? Random.Range(2,5) : 4;
             randomCombinations += current_x.ToString() + "-encounter:";
             for (int i = 0; i < num; i++)
             {
@@ -236,6 +244,10 @@ public class CharacterManager : MonoBehaviour
         doRandomCombinations();
         current_round_character_index = 5;
         RefreshCurrentCharacterMarker();
+        if (speedup_wizard_dev)
+        {
+            GM.party["Wizard"].initiative = 10;
+        }
     }
 
     public void NewTurn()
@@ -266,13 +278,9 @@ public class CharacterManager : MonoBehaviour
         {
             return null;
         }
-        if (!current_round_character.alive)
+        if (!current_round_character.is_alive)
         {
             return NextCharacterTurn(); 
-        }
-        if (select_active_character)
-        {
-            UnityEditor.Selection.activeGameObject = current_round_character.gameObject;
         }
         Debug.Log(current_round_character.name + " is starting his round with an initiative of " + current_round_character.initiative);
 
@@ -300,7 +308,7 @@ public class CharacterManager : MonoBehaviour
         List<Character> ret = new List<Character>();
         for(int i = current_round_character_index; i < ioc.Count; i++)
         {
-            if (!ioc[i].alive)
+            if (!ioc[i].is_alive)
             {
                 continue;
             }
@@ -308,7 +316,7 @@ public class CharacterManager : MonoBehaviour
         }
         for (int i = 0; i < current_round_character_index; i++)
         {
-            if (!ioc[i].alive)
+            if (!ioc[i].is_alive)
             {
                 continue;
             }

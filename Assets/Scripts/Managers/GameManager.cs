@@ -63,12 +63,7 @@ public class GameManager : MonoBehaviour
         {
             return;
         }
-        foreach(KeyValuePair<int, Character> kv in GM.game.current_enemy_party.members.members_positions)
-        {
-            Character c = kv.Value;
-            GM.devoutright.text += " <color=#" + ColorUtility.ToHtmlStringRGB(c.GetComponent<SpriteRenderer>().color) + ">" + c.hp + "</color>";
-        }
-
+        
     
     }
 
@@ -155,7 +150,7 @@ public class GameManager : MonoBehaviour
         }
         combat_camera_target.transform.position = Vector2.Lerp(GM.party.transform.position, current_enemy_party.transform.position, .5f);
         //GM.cine_cam.target = combat_camera_target;
-        return combat_routine = StartCoroutine(CombatStep());
+        return (combat_routine = StartCoroutine(CombatStep()));
     }
     Coroutine acting_routine = null;
     public bool is_acting { get { return acting_routine != null; } }

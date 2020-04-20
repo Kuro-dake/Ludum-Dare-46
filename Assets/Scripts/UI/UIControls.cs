@@ -4,8 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public class UIControls : MonoBehaviour
 {
-    [SerializeField]
-    List<NamedSprite> icons = new List<NamedSprite>();
+    List<NamedSprite> icons { get { return GetComponentInChildren<IconContainer>().icons; } }
     public Sprite GetIcon(string icon_name)
     {
         try
@@ -39,8 +38,30 @@ public class UIControls : MonoBehaviour
         // Set
         return canvasPos;
     }
-    public void ShowAbilityButtons(Character target, List<Ability> abilities)
+    Character showing_abilities_for;
+    public void ShowAbilityButtons(Character target)
     {
+
+        if (!GM.can_show_ability_buttons)
+        {
+            return;
+        }
+
+        if (target == showing_abilities_for)
+        {
+            return;
+        }
+
+        if(!(GM.characters.current_round_character is PlayerCharacter))
+        {
+            return;
+        }
+
+        showing_abilities_for = target;
+
+
+        List<Ability> abilities = GM.characters.current_round_character.GetAvailableAbilitiesFor(target);
+
         int i = 0;
         float step = 65f;
         float start = step * (abilities.Count - 1) * -.5f;
@@ -59,12 +80,30 @@ public class UIControls : MonoBehaviour
 
             b.onClick.AddListener(delegate {
                 a.ApplyAbility(target);
-                HideAbilityButtons();
+                HideAbilityButtons(showing_abilities_for);
             });
             b.gameObject.AddComponent<SkillButtonHover>().ability = a;
         }
     }
 
+    public void HideAbilityButtons(Character c)
+    {
+        if(showing_abilities_for != c) {
+            return;
+        }
+        foreach(ButtonDescription bd in ability_buttons.GetComponentsInChildren<ButtonDescription>())
+        {
+            info_panel.HideButtonDescription(bd);
+        }
+
+        showing_abilities_for = null;
+        ability_buttons.DestroyChildren();
+    }
+    public InfoPanel info_panel;
+    public void HideGlobalAbilityButtons()
+    {
+        global_ability_buttons.DestroyChildren();
+    }
     public void ShowGlobalAbilityButtons(List<Ability> abilities)
     {
         int i = 0;
@@ -86,7 +125,7 @@ public class UIControls : MonoBehaviour
             b.transform.Find("Image").GetComponent<Image>().sprite = GetIcon(a.sprite_name);
             b.onClick.AddListener(delegate {
                 a.ApplyAbility();
-                HideAbilityButtons();
+                HideGlobalAbilityButtons();
             });
             b.gameObject.AddComponent<SkillButtonHover>().ability = a;
         }
@@ -116,16 +155,7 @@ public class UIControls : MonoBehaviour
         sequence_icons.ForEach(delegate (GameObject go) { Destroy(go); });
         sequence_icons.Clear();
     }
-    public void HideAbilityButtons()
-    {
-        ability_buttons.DestroyChildren();
-        priority_displayed = false;
-        SetDescription("");
-    }
-    public void HideGlobalAbilityButtons()
-    {
-        global_ability_buttons.DestroyChildren();
-    }
+   
 
 
 
@@ -135,6 +165,7 @@ public class UIControls : MonoBehaviour
     public bool shop_open = false;
     public void OpenShop(string option_string)
     {
+        
         shop_open = true;
         shop_display.gameObject.SetActive(true);
         option_string = option_string.Trim();
@@ -154,10 +185,9 @@ public class UIControls : MonoBehaviour
 
             ShopItemData sid = ShopItemData.Parse(option);
             sb.button_image.sprite = GetIcon(sid.ability != null ? sid.ability.sprite_name : sid.stat);
-            sb.text = sid.character.display_name
-                + "\n +" + sid.value
-                + (sid.ability != null ? " " + sid.ability_name : "")
-                + " " + sid.stat;
+            sb.text = sid.ToString();
+
+            sb.character = sid.character;
 
             sb.char_icon.sprite = GetIcon(sid.character.icon_name);
 
@@ -166,6 +196,9 @@ public class UIControls : MonoBehaviour
                 ShopItemData sidin = ShopItemData.Parse(option);
                 Debug.Log(sidin.ToString());
                 sidin.Apply();
+                sb.text = sidin.ToString();
+                info_panel.HideButtonDescription(sb.bd_script);
+                info_panel.ShowButtonDescription(sb.bd_script);
             });
         }
 
@@ -248,7 +281,9 @@ public class UIControls : MonoBehaviour
         }
         public override string ToString()
         {
-            return "name: " + character_name + ";  " + "; ability_name: " + ability_name + "; stat: " + stat + ";  " + "; value: " + value + ";  " + "; price: " + price + ";  ";
+            return character.display_name
+                + (ability != null ? "\n\n" + ability.ToString() : "")
+                + "\n\n +" + value + " " + stat + (ability != null ? " for this ability" : "");
         }
     }
 
@@ -259,56 +294,12 @@ public class UIControls : MonoBehaviour
         shop_open = false;
         GM.game.combat_ended = Time.time;
     }
-    [SerializeField]
-    GameObject description_panel = null;
-    bool priority_displayed = false;
-    public void SetDescription(string value, bool priority = false)
-    {
-
-        if (priority_displayed && !priority)
-        {
-            return;
-        }
-        if (priority && value.Length == 0)
-        {
-            priority_displayed = false;
-        }
-        else
-        {
-            priority_displayed = priority;
-        }
-        if (value.Length == 0)
-        {
-
-            SetDescriptionActive(false);
-            return;
-        }
-        SetDescriptionActive(true);
-        Text t = description_panel.GetComponentInChildren<Text>();
-        t.text = value;
-    }
-
-    Coroutine sda_routine = null;
-    bool sda_to;
-    void SetDescriptionActive(bool to)
-    {
-        if (sda_routine != null && !sda_to)
-        {
-            StopCoroutine(sda_routine);
-        }
-        sda_to = to;
-        sda_routine = StartCoroutine(SetDescriptionActiveStep(to));
-    }
-    IEnumerator SetDescriptionActiveStep(bool to)
-    {
-        yield return to ? null : new WaitForSeconds(.5f);
-        description_panel.SetActive(to);
-    }
+    
 
     public void Initialize()
     {
         CloseShop();
-        description_panel.SetActive(false);
+        info_panel.Initialize();
     }
 
 
@@ -340,5 +331,5 @@ public class UIControls : MonoBehaviour
         yield return new WaitForSeconds(1f);
         GameContainer.ReloadGame();
     }
-
+    
 }

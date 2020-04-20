@@ -39,9 +39,17 @@ public class ShopButton : MonoBehaviour
         
         set
         {
-            button.GetComponentInChildren<ButtonDescription>().description = value;
+            bd_script.description = value;
         }
 
+    }
+
+    public ButtonDescription bd_script
+    {
+        get
+        {
+            return button.GetComponentInChildren<ButtonDescription>();
+        }
     }
 
     public int price
@@ -49,6 +57,14 @@ public class ShopButton : MonoBehaviour
         set
         {
             transform.Find("priceText").GetComponent<Text>().text = value.ToString();
+        }
+    }
+
+    public Character character
+    {
+        set
+        {
+            transform.GetComponentInChildren<CharacterDescriptionUIHover>().c = value;
         }
     }
 }

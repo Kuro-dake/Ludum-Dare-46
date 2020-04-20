@@ -24,21 +24,18 @@ public class SequenceIconHover : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
     void SetMark(Character c = null)
     {
-        if(sequence_mark == null)
-        {
-            sequence_mark = new GameObject("sequence mark");
-            SpriteRenderer sr = sequence_mark.AddComponent<SpriteRenderer>();
-            sr.sprite = GM.ui.GetIcon("arrow");
-            sr.transform.localScale = Vector3.one * 2f;
-            sr.color = new Color(.6f,.6f,.9f) ;
-        }
-        if(c == null)
+        if (c == null)
         {
             sequence_mark.SetActive(false);
             return;
         }
+        if (sequence_mark == null)
+        {
+            sequence_mark = GM.characters.CreateMark(c.transform, new Color(.6f, .6f, .9f));
+        }
+        
         sequence_mark.SetActive(true);
         sequence_mark.transform.SetParent(c.transform);
-        sequence_mark.transform.localPosition = Vector2.up * 8f / c.transform.localScale.y;
+        sequence_mark.transform.localPosition = Vector2.up * CharacterManager.ARROW_UP_MULTIPLIER / c.transform.localScale.y;
     }
 }

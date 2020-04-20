@@ -29,8 +29,8 @@ public class GameContainer : MonoBehaviour
         inst = this;
         if (load_game_from_file)
         {
+            _game_inst = gm != null ? gm_parent : null;
             LoadFromFile();
-            
             Reboot();
         }
         else

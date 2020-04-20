@@ -157,7 +157,7 @@ public class Ability
         if (!buff.is_inert)
         {
             NamedBuffEffect nbe = buff.effects[0];
-            ret += (ret.Length > 0 ? " and " : "") + " + "+ nbe.second + " " + nbe.first.ToString();
+            ret += (ret.Length > 0 ? " and " : "") + " gives + "+ nbe.second + " " + nbe.first.ToString() + " boost";
         }
         string singular = "target";
         string plural = "targets";

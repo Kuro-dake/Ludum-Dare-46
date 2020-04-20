@@ -54,6 +54,7 @@ public class Scenery : MonoBehaviour
             
         }
     }
+
     void LoadXTags()
     {
         xtags.Clear();

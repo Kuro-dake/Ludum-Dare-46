@@ -1,22 +1,22 @@
+20-encounter:impaler1
 70-dialogue:first_encounter|encounter:goblin2;goblin2
 120-env:resources;28;first_resources
-160-dialogue:second_encounter|encounter:goblin1;goblin1;goblin2;goblin2|dialogue:second_encounter_end
-210-encounter:goblin1;goblin2;goblin2;goblin1
+210-dialogue:second_encounter|encounter:goblin1;goblin1;goblin2;goblin2|dialogue:second_encounter_end
 250-encounter:goblin1;goblin1;goblin2
 314-encounter:goblin2;goblin2
-390-encounter:impaler1
 458-encounter:goblin2;goblin1;goblin1;goblin1
 500-encounter:goblin1;goblin1;goblin2
 571-encounter:goblin1;goblin1;goblin2;goblin2
-610-env:checkpoint;;first_checkpoint
-690-env:shop;Warrior/maxhp/10/50+Ranger/Throw knife/damage/2/100+Wizard/Lightning/damage/2/200+Wizard/Heal/heal/2/300;first_shop
+572-env:checkpoint;first_checkpoint
+660-dialogue:second_checkpoint
+674-env:shop;Warrior/maxhp/2/50+Warrior/Slash/damage/3/50+Ranger/Throw knife/damage/2/100+Wizard/Lightning/damage/1/130+Wizard/Heal/heal/2/130;first_shop
 740-encounter:goblin1;goblin1;goblin2;goblin2
 866-encounter:goblin1;goblin1;goblin1;goblin2
 960-encounter:goblin2;goblin2;goblin2;goblin2
 1104-encounter:goblin1;goblin1;goblin2;goblin1
 1206-encounter:goblin1;goblin2;goblin2;goblin2
 1270-encounter:goblin1;goblin2;goblin2;goblin1
-1333-encounter:goblin2;goblin2;goblin1;goblin2
+1333-env:checkpoint;first_checkpoint
 1451-encounter:goblin2;goblin1;goblin2;goblin2
 1500-dialogue:win
 1588-encounter:goblin1;goblin2;goblin1;goblin2

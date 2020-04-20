@@ -294,8 +294,8 @@ public class CharacterManager : MonoBehaviour
 
     private void RefreshCurrentCharacterMarker()
     {
-        dev_turn_marker.SetParent(current_round_character.transform);
-        dev_turn_marker.localPosition = new Vector2(.2f, .6f);
+        dev_turn_marker.track = current_round_character.transform;
+        dev_turn_marker.offset = new Vector2(.2f, .6f);
     }
 
     public List<Character> GetNextTurnSequence()
@@ -325,7 +325,7 @@ public class CharacterManager : MonoBehaviour
         return ret;
     }
 
-    public Transform dev_turn_marker;
+    public PositionTracker dev_turn_marker;
 }
 [System.Serializable]
 public class EnemyData

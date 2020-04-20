@@ -15,4 +15,9 @@ public class SkillButtonHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
     {
         GM.characters.MarkTargets();
     }
+
+    private void OnDestroy()
+    {
+        GM.characters.MarkTargets();
+    }
 }

@@ -133,7 +133,7 @@ public class GM : MonoBehaviour
         get
         {
             
-            return !cinema.active && !ui.shop_open && !game.game_over;
+            return !cinema.active && !ui.shop_open && !game.game_over && (GM.characters.current_round_character.has_actions_left || !GM.game.is_combat_runnig);
         }
     }
 

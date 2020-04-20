@@ -88,6 +88,7 @@ public class UIControls : MonoBehaviour
 
     public void HideAbilityButtons(Character c)
     {
+        
         if(showing_abilities_for != c) {
             return;
         }
@@ -101,7 +102,7 @@ public class UIControls : MonoBehaviour
     }
     public InfoPanel info_panel;
     public void HideGlobalAbilityButtons()
-    {
+    { 
         global_ability_buttons.DestroyChildren();
     }
     public void ShowGlobalAbilityButtons(List<Ability> abilities)
@@ -163,9 +164,10 @@ public class UIControls : MonoBehaviour
     ShopButton shop_button_prefab = null;
     public float shop_button_margin = 250f;
     public bool shop_open = false;
+    public string current_shop_string;
     public void OpenShop(string option_string)
     {
-        
+        current_shop_string = option_string;
         shop_open = true;
         shop_display.gameObject.SetActive(true);
         option_string = option_string.Trim();
@@ -192,20 +194,37 @@ public class UIControls : MonoBehaviour
             sb.char_icon.sprite = GetIcon(sid.character.icon_name);
 
             sb.price = sid.price;
-            sb.button.onClick.AddListener(delegate {
-                ShopItemData sidin = ShopItemData.Parse(option);
-                Debug.Log(sidin.ToString());
-                sidin.Apply();
-                sb.text = sidin.ToString();
-                info_panel.HideButtonDescription(sb.bd_script);
-                info_panel.ShowButtonDescription(sb.bd_script);
-            });
+            if (sid.price <= GM.game.resources)
+            {
+                sb.button.onClick.AddListener(delegate
+                {
+                    ShopItemData sidin = ShopItemData.Parse(option);
+                    Debug.Log(sidin.ToString());
+                    sidin.Apply();
+                    sb.text = sidin.ToString();
+
+                    info_panel.HideButtonDescription(sb.bd_script);
+                    info_panel.ShowButtonDescription(sb.bd_script);
+
+                    current_shop_string = current_shop_string.Replace(sidin.data_string, "");
+                    CloseShop();
+                    OpenShop(current_shop_string);
+                });
+            }
+            else
+            {
+                foreach(Image img in sb.GetComponentsInChildren<Image>())
+                {
+                    img.color = new Color(.9f, .7f, .7f);
+                }
+            }
         }
 
     }
 
     private class ShopItemData
     {
+        public string data_string;
         public const string resource_name = "demon essence";
         public string character_name;
         public Character character;
@@ -258,6 +277,7 @@ public class UIControls : MonoBehaviour
 
             ret.character_name = data_frag[0];
             ret.character = GM.party[ret.character_name];
+            ret.character.ToString();
             if (!stat_names.Contains(data_frag[1]))
             {
                 ret.ability_name = data_frag[1];
@@ -276,7 +296,8 @@ public class UIControls : MonoBehaviour
                 ret.value = int.Parse(data_frag[2]);
                 ret.price = int.Parse(data_frag[3].Replace("price", ""));
             }
-
+            ret.data_string = data;
+            
             return ret;
         }
         public override string ToString()
@@ -318,17 +339,19 @@ public class UIControls : MonoBehaviour
         while(go_image.color.a < 1f)
         {
             go_image.color += Color.black * Time.deltaTime;
-            go_text.color = go_image.color;
+            go_text.color = Color.white - Color.black * (1f - go_image.color.a);
             yield return null;
         }
+        Destroy(GM.scenery.gameObject);
+        Destroy(GM.game.current_enemy_party);
         yield return new WaitForSeconds(3f);
-        while (go_image.color.a > 0f)
+        while (go_text.color.a > 0f)
         {
-            go_image.color -= Color.black * Time.deltaTime;
-            go_text.color = go_image.color;
+            go_text.color -= Color.black * Time.deltaTime;
             yield return null;
         }
         yield return new WaitForSeconds(1f);
+        
         GameContainer.ReloadGame();
     }
     

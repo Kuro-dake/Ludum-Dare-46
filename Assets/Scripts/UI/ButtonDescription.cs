@@ -19,4 +19,9 @@ public class ButtonDescription : MonoBehaviour, IPointerEnterHandler, IPointerEx
     {
         GM.ui.info_panel.HideButtonDescription(this);
     }
+
+    public void OnDestroy()
+    {
+        GM.ui.info_panel.HideButtonDescription(this);
+    }
 }

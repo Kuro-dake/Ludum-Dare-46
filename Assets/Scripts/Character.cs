@@ -137,7 +137,9 @@ public abstract class Character : MonoBehaviour
         hp = max_hp;
         anim_multiplier = UnityEngine.Random.Range(.8f, 1.2f);
         anim.speed = .1f * anim_multiplier;
-        var ca = character_abilities; 
+        var ca = character_abilities;
+
+        abilities.ForEach(delegate (Ability a) { a.owner = this; });
     }
 
     public void ApplyBuff(Buff b)
@@ -174,7 +176,7 @@ public abstract class Character : MonoBehaviour
         float duration = .6f;
         while ((duration -= Time.deltaTime) > 0f)
         {
-            sprite_transform.localPosition = UnityEngine.Random.insideUnitCircle * duration * 2f;
+            sprite_transform.localPosition = UnityEngine.Random.insideUnitCircle * duration * 1.5f;
             yield return null;
         }
         sprite_transform.localPosition = Vector2.zero;

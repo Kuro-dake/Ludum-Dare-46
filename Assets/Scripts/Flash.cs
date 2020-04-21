@@ -34,24 +34,51 @@ public class Flash : MonoBehaviour
             Destroy(anim);
         }
     }
-    
+    float scale_speed = 7f;
+    float fade_speed = 3f;
     private void Update()
     {
-        transform.localScale += Vector3.one * Time.deltaTime * 7f;
-        SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
-        sr.color -= Color.black * Time.deltaTime * 3f;
-        if(sr.color.a <= 0f)
+        Vector3 basev = Vector3.one;
+        basev.x *= Mathf.Sign(transform.localScale.x);
+        transform.localScale += basev * Time.deltaTime * scale_speed;
+        float min_a = 1f;
+        foreach(SpriteRenderer sr in srs)
+        {
+            sr.color -= Color.black * Time.deltaTime * fade_speed;
+            if (sr.color.a < min_a)
+            {
+                min_a = sr.color.a;
+            }
+        }
+        if(min_a <= 0f)
         {
             Destroy(gameObject);
         }
+        
     }
-
-    public static void DoFlash(GameObject go)
+    List<SpriteRenderer> srs = new List<SpriteRenderer>();
+    public static void DoFlash(GameObject go, float scale_speed = 7f, float fade_speed = 3f)
     {
+
         GameObject ggo = Instantiate(go);
         ggo.transform.position = go.transform.position;
-        ggo.GetComponentInChildren<SpriteRenderer>().sortingOrder -= 1;
-        ggo.GetComponentInChildren<SpriteRenderer>().color -= Color.black * .2f;
-        ggo.AddComponent<Flash>().Strip();
+
+        List<SpriteRenderer> _srs = new List<SpriteRenderer>(ggo.GetComponentsInChildren<SpriteRenderer>());
+        if(ggo.GetComponent<SpriteRenderer>() != null)
+        {
+            _srs.Add(ggo.GetComponent<SpriteRenderer>());
+        }
+        
+        foreach (SpriteRenderer sr in _srs)
+        {
+            sr.sortingOrder -= 1;
+            sr.color -= Color.black * .2f;
+        }
+
+        Flash f = ggo.AddComponent<Flash>();
+        f.srs = _srs;
+        f.scale_speed = scale_speed;
+        f.fade_speed = fade_speed;
+        f.Strip();
     }
 }

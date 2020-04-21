@@ -109,13 +109,27 @@ public class IntroScreen : MonoBehaviour
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            ShowHide(!revealed);
-            //Application.LoadLevel(Application.loadedLevel);
-            //StartGame();
-        }
+       
     }
+    
+    public void NewGame()
+    {
+        ShowHide(false);
+        GameContainer.load_game_from_file = false;
+    }
+
+    public void StoryGame()
+    {
+        ShowHide(false);
+        GameContainer.story_mode = true;
+    }
+
+    public void Continue()
+    {
+        ShowHide(false);
+        GameContainer.load_game_from_file = true;
+    }
+
     [SerializeField]
     GameObject intro;
     void StartGame()

@@ -126,12 +126,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22fd1e633d57dbd4e84cb461f6b4d186, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _hp: 3
+  max_hp: 12
+  _defense: 0
+  initiative: 3
   abilities:
-  - name: Cut
+  - name: Slash
     sprite_name: 
     from_positions: 0000000001000000
     target_type: 0
-    damage: 2
+    damage: 3
     heal: 0
     target_positions: 0000000001000000
     target_number: 1
@@ -152,16 +156,12 @@ MonoBehaviour:
   buffs: []
   position: 0
   party: {fileID: 0}
-  _hp: 3
-  max_hp: 12
-  _defense: 0
-  initiative: 3
   has_finished_acting: 0
   _max_ap: 1
   _icon_name: demon_warrior
   resources:
     first: 8
-    second: 13
+    second: 12
 --- !u!70 &3245039895601444057
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

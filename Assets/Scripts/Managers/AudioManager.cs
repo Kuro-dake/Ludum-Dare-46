@@ -17,7 +17,7 @@ public class AudioManager : MonoBehaviour
         return PlayTrack(clips.Find(delegate (NamedAudioClip ac)
         {
             return ac.first == sound_name;
-        }).second, .3f, pitch);
+        }).second, volume, pitch);
     }
 
     public int max_sources = 5;

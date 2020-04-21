@@ -17,7 +17,7 @@ public class PlayerCharacter : Character
                 switch_ability.name = "Switch positions with " + c.name;
                 switch_ability.owner = this;
                 switch_ability.sprite_name = "switch";
-                switch_ability.target_number = 0;
+                switch_ability.target_number = 1;
                 switch_ability.target_type = target_type.all;
                 ret.Add(switch_ability);
                 if (!combat)
@@ -27,7 +27,7 @@ public class PlayerCharacter : Character
                     //ColorUtility.TryParseHtmlString("#A7FFA7", out select_ability.ability_color);
                     select_ability.owner = this;
                     select_ability.sprite_name = "arrow";
-                    select_ability.target_number = 0;
+                    select_ability.target_number = 1;
                     select_ability.target_type = target_type.all;
                     ret.Add(select_ability);
                 }
@@ -38,7 +38,7 @@ public class PlayerCharacter : Character
                 skip_ability.name = "Skip turn";
                 skip_ability.owner = this;
                 skip_ability.sprite_name = "skip";
-                skip_ability.target_number = 0;
+                skip_ability.target_number = 1;
                 skip_ability.target_type = target_type.all;
                 ret.Add(skip_ability);
             }

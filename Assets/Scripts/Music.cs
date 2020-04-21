@@ -54,6 +54,7 @@ public class Music : MonoBehaviour
     float no_game_pitch = .05f, pitch_speed = .2f;
     IEnumerator SyncTracks()
     {
+        yield break;
         while (true)
         {
             yield return new WaitForSeconds(16f);
@@ -86,7 +87,7 @@ public class Music : MonoBehaviour
                 target_volume *= .55f;
                 break;
         }
-        for (int i = 0; i < tracks.Count; i++)
+        for (int i = 0; i <= tracks.Count; i++)
         {
             this[i] = Mathf.MoveTowards(this[i], running > i || i == 0 ? target_volume : 0f, Time.deltaTime * fis_inv);
             this[i] = Mathf.Clamp(this[i], 0f, 1f);
@@ -100,10 +101,18 @@ public class Music : MonoBehaviour
     {
         get
         {
+            if(i >= tracks.Count)
+            {
+                return 0;
+            }
             return tracks[i].volume;
         }
         set
         {
+            if (i >= tracks.Count)
+            {
+                return;
+            }
             tracks[i].volume = value;
         }
     }

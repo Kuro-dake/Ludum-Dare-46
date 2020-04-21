@@ -149,8 +149,8 @@ MonoBehaviour:
   _max_ap: 1
   _icon_name: demon_rogue
   resources:
-    first: 4
-    second: 7
+    first: 8
+    second: 12
 --- !u!70 &8275202144100296319
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

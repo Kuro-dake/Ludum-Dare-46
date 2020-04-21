@@ -1,0 +1,8 @@
+none;l:The group sets up a camp. Night falls...|rogue;l:We're almost there. Tomorrow we'll arrive at the portal.|warrior;l:So... any idea what we'll do once we get there?|wizard;r:I was thinking about using Gray's blood as a catalyst to close it. 
+The demon essence is useless, but I'm correct, one could use 
+the blood of a living demon to seal the deal. But I'm not so sure I'm still with that idea.|rogue;l:Why not?|wizard;r:It'd require a lot of blood.|rogue;l:I see.|rogue;l:I don't think I like that idea.|gray;r:It's allright. It's what I came to this world for. To close that portal.|wizard;l:Well, even if I was inclined to use yours, we'd need a lot more than you have. 
+Just yours won't do.|warrior;l:Wait, so what was your plan? Why are we even going to the portal then?|wizard;r:I was hoping I would figure it on the road. I mean, there are lots of
+demons running around. But I can't see how can we capture enough of them alive 
+to do the deed.|warrior;l:How many do we need?|wizard;r:About fifteen.|warrior;l:Fuck...|rogue;r:...|rogue;r:Gray... how were you and your folks going to close the portal?|gray;l:There's a demonic ritual. We were performing it when you attacked us. 
+It's a lot more effective...|rogue;r:But it requires human blood. That's why there were human sacrifices back at the ruins.|gray;l:Yes.|wizard;r:Can you perform the ritual?|gray;l:I do. One can perform it on their own. We were all there, because we were
+fleeing hell. We wanted to stay in this world.|wizard;r:How many sacrifices does it require?|gray;l:Three people...|wizard;r:...|rogue;l:...|warrior;r:I think we all know what it means for us. Do we trust Gray with our lives?|wizard;l:I do.|rogue;l:I do as well.|gray;l:... then I'll do my best. Thank you.

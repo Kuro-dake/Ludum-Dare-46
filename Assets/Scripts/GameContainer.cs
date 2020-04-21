@@ -21,26 +21,20 @@ public class GameContainer : MonoBehaviour
     }
     
     int init_state = 76137515;
-    [SerializeField]
-    bool load_game_from_file = false;
+    
+    public static bool load_game_from_file = false;
+    public static bool story_mode = false;
     private void Start()
     {
         
         inst = this;
+        _game_inst = gm != null ? gm_parent : null;
         if (load_game_from_file)
         {
-            _game_inst = gm != null ? gm_parent : null;
             LoadFromFile();
+        }
             Reboot();
-        }
-        else
-        {
-            if(gm != null)
-            {
-                _game_inst = gm_parent;
-                gm.Initialize();
-            }
-        }
+        
     }
 
     private void Update()
@@ -50,6 +44,7 @@ public class GameContainer : MonoBehaviour
             Reboot();
         }
     }
+    
     public static void ReloadGame()
     {
         inst.Reboot();
@@ -82,7 +77,7 @@ public class GameContainer : MonoBehaviour
         int tick = init_state == -1 ? System.Environment.TickCount : init_state;
         Debug.Log(tick);
         Random.InitState(tick);
-        gm.Initialize();
+        gm.Initialize(story_mode);
         if(checkpoint != null)
         {
             foreach (SavedCharacter sc in checkpoint.characters)

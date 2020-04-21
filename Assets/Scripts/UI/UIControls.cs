@@ -107,7 +107,15 @@ public class UIControls : MonoBehaviour
     }
     public void ShowGlobalAbilityButtons(List<Ability> abilities)
     {
+
+
         int i = 0;
+        float step = 65f;
+        float start = step * (abilities.Count - 1) * -.5f;
+
+
+
+
         foreach (Ability a in abilities)
         {
             if (a.target_number < 2 && (a.target_type == target_type.enemy || a.target_type == target_type.ally || a.target_type == target_type.self))
@@ -120,7 +128,7 @@ public class UIControls : MonoBehaviour
             rt.anchorMax = Vector2.up;
             rt.anchorMin = Vector2.up;
             rt.pivot = Vector2.up;
-            rt.localPosition = (Vector2.down * 65 * (++i)) + Vector2.right * 35;
+                rt.localPosition = (Vector2.right * (i++ * step + start) + Vector2.up * 85f);// + Vector2.up * 35;
 
             b.GetComponent<ButtonDescription>().description = a.ToString();
             b.transform.Find("Image").GetComponent<Image>().sprite = GetIcon(a.sprite_name);
@@ -146,7 +154,7 @@ public class UIControls : MonoBehaviour
             Image icon = iicon.transform.Find("Image").GetComponent<Image>();
             iicon.gameObject.AddComponent<SequenceIconHover>().character = c;
             iicon.transform.SetParent(sequence_display);
-            iicon.gameObject.GetComponent<RectTransform>().localPosition = Vector2.right * (i++ * step + start) + Vector2.up * 25f;
+            iicon.gameObject.GetComponent<RectTransform>().localPosition = Vector2.right * (i++ * step + start) + Vector2.up * 35f;
             icon.sprite = GetIcon(c.icon_name);
             sequence_icons.Add(iicon.gameObject);
         }
@@ -322,37 +330,50 @@ public class UIControls : MonoBehaviour
         CloseShop();
         info_panel.Initialize();
     }
+    float multiplier = 1f;
 
-
-    public void GameOver()
+    public void GameOver(bool victory = false)
     {
+        if (victory)
+        {
+            multiplier = .3f;
+            go_image.color = Color.white - Color.black;
+            go_text.text = "\"Brothers, demon, it was an honor!\"\n\nGray performs the ritual, taking the lives of his companions.\n\nThe combined power of their blood closes the gates of hell.\n\n";
+            go_text.text += "The world will never know it almost ended that day.\n\nTHE END\n\n<size=14><i>Congratulations, and thank you for playing.\n\nMade by Kuro / Dizztal for Ludum Dare Jam 18. - 21. 4. 2020</i></size>";
+            go_text.color = Color.clear;
+        }
         GM.game.game_over = true;
         gameover_panel.gameObject.SetActive(true);
-        StartCoroutine(GameOverStep());
+        StartCoroutine(GameOverStep(victory));
     }
     [SerializeField]
     Transform gameover_panel;
     Image go_image { get { return gameover_panel.GetComponent<Image>(); } }
-    Text go_text { get { return gameover_panel.GetComponentInChildren<Text>(); } }
-    IEnumerator GameOverStep()
+    Text go_text { get { return gameover_panel.Find("Text").GetComponentInChildren<Text>(); } }
+    IEnumerator GameOverStep(bool victory = false)
     {
         while(go_image.color.a < 1f)
         {
-            go_image.color += Color.black * Time.deltaTime;
-            go_text.color = Color.white - Color.black * (1f - go_image.color.a);
+            go_image.color += Color.black * Time.deltaTime * multiplier;
+            go_text.color = (victory ? Color.black : Color.white) - Color.black * (1f - go_image.color.a);
             yield return null;
         }
         Destroy(GM.scenery.gameObject);
         Destroy(GM.game.current_enemy_party);
-        yield return new WaitForSeconds(3f);
-        while (go_text.color.a > 0f)
-        {
-            go_text.color -= Color.black * Time.deltaTime;
-            yield return null;
-        }
-        yield return new WaitForSeconds(1f);
         
-        GameContainer.ReloadGame();
+        if (!victory)
+        {
+            yield return new WaitForSeconds(3f);
+            while (go_text.color.a > 0f)
+            {
+                go_text.color -= Color.black * Time.deltaTime;
+                yield return null;
+            }
+            yield return new WaitForSeconds(1f);
+        
+            
+            GameContainer.ReloadGame();
+        }
     }
     
 }

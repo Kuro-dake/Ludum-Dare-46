@@ -94,7 +94,7 @@ public class GM : MonoBehaviour
     public DevOptions _dev_options = new DevOptions();
     public static DevOptions dev_options { get { return inst._dev_options; } }
     bool initialized = false;
-    public void Initialize()
+    public void Initialize(bool story_mode = false)
     {
         Debug.Log("Initializing GM");
         if (initialized)
@@ -114,10 +114,21 @@ public class GM : MonoBehaviour
         party.Initialize();
         level_manager.GenerateLevel("World");
         game.current_scenery.Initialize();
-        cinema.PlayLevelString(0); 
+        if (GM.scenery.x < 5f)
+        {
+            cinema.PlayLevelString(0);
+        }
         characters.Initialize();
         //game.StartCombat(_enemy_party);
         ui.Initialize();
+
+        if (story_mode)
+        {
+            Character wiz = GM.party["Wizard"];
+            wiz.GetAbilityByName("Lightning").ModifiyStat("damage", 30);
+            wiz.initiative = 10;
+        }
+
     }
 
    

@@ -24,7 +24,18 @@ public abstract class Character : MonoBehaviour
     }
 
     public Color color { get { return GetComponent<SpriteRenderer>().color; } }
-
+    [SerializeField]
+    protected int _hp = 1;
+    public int hp { get { return _hp; } protected set { _hp = value; } }
+    public int max_hp;
+    [SerializeField]
+    int _defense;
+    public int defense { get { return _defense + GetBuffsValue(buff_type.defense); } }
+    public bool is_alive
+    {
+        get { return hp > 0; }
+    }
+    public int initiative;
     [SerializeField]
     List<Ability> abilities = new List<Ability>();
     protected List<Ability> character_abilities
@@ -58,18 +69,7 @@ public abstract class Character : MonoBehaviour
             return GM.party;
         }
     }
-    [SerializeField]
-    protected int _hp = 1;
-    public int hp { get { return _hp; } protected set { _hp = value; } }
-    public int max_hp;
-    [SerializeField]
-    int _defense;
-    public int defense { get { return _defense + GetBuffsValue(buff_type.defense); } }
-    public bool is_alive
-    {
-        get { return hp > 0; }
-    }
-    public int initiative;
+    
     public void Heal(int amount)
     {
         hp = Mathf.Clamp(hp+amount,0, max_hp);
@@ -308,7 +308,7 @@ public abstract class Character : MonoBehaviour
             {
                 return a.target_type == target_type.self || a.target_type == target_type.ally;
             }
-            return a.target_type == type;
+            return a.target_type == type && a.target_number == 1;
         });
         if(target_type.self == type || target_type.ally == type)
         {

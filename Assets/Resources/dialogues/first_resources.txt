@@ -1,1 +1,2 @@
-warrior;l:Ugh... there's this demon stuff all over the place...
+warrior;l:Ugh... there's this demon stuff all over the place...|wizard;r:Let's take it with us. 
+Maybe I could use it to close the portal.

@@ -93,7 +93,7 @@ public class GameManager : MonoBehaviour
             GameManager.pause = !GameManager.pause;
         }
 
-        GM.music.running = phase == game_phase.movement ? 0 : 2;
+        GM.music.running = game_over ? 0 : ( phase == game_phase.movement ? 2 :3);
     }
 
     public void LoadLevelParams(int level)
@@ -196,13 +196,14 @@ public class GameManager : MonoBehaviour
         combat_ended = Time.time;
         combat_routine = null;
 
-        Flash.DoFlash(GM.party["Wizard"].gameObject);
+        
         foreach(Character c in GM.party.members.members)
         {
             if(c.name == "Wizard")
             {
                 continue;
             }
+            Flash.DoFlash(c.gameObject);
             c.Shake();
 
             c.Heal(100);

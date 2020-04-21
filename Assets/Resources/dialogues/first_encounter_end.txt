@@ -1,0 +1,1 @@
+rogue;l:Did this little whelp just help us defeat other demons?|warrior;r:So I wasn't imagining knowing what's which enemy going to do next?|gray;r|wizard;l:Why did you help us?|gray;r:...|wizard;l:You look terrified. I'll leave you be.

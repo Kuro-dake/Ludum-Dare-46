@@ -1,1 +1,2 @@
-wizard;l:This is a place of power. We can get rid of the demon essence here.
+wizard;l:This place resonates with the demon essence, but I can't figure it out.|gray;r:...|wizard;l:What...?|none;r|none;l:The child demon activates the place of power 
+with the demon essence. You can upgrade your characters here.

@@ -1,4 +1,4 @@
-rogue;l:If what you say is true, you must really hate us.|gray;r:I don't.|rogue;l:Even we and our brothers killed your whole family...|gray;r:And my family killed almost all your brothers. Do you hate me?|rogue;l:I don't... I don't think so... but we attacked you without warning.|gray;r:You were trying to protect your world, as were we. 
+none;l:The group sets up a camp. Night falls...|rogue;l:If what you say is true, you must really hate us.|gray;r:I don't.|rogue;l:Even though we and our brothers killed your whole family...|gray;r:And my family killed almost all of your brothers. Do you hate me?|rogue;l:I don't... I don't think so... but we attacked you without warning.|gray;r:You were trying to protect your world, as were we. 
 You had no way of knowing what we were doing up in the ruins.|rogue;l:Does that make you not feel the pain of loss?|gray;r:The pain is there, and I don't think it will ever go away. 
 But pain has nothing to do with me hating you or not. 
-I can tell pain from hate, although they are very similar.|rogue;l:Are we getting served a lesson in humanity from a child demon?|wizard;l:Yes, we are. And it's the best one I had in ages.
+I can tell pain from hate, although they are very similar.|rogue;l:Am I getting served a lesson in humanity from a child demon?|wizard;l:Yes, you are...

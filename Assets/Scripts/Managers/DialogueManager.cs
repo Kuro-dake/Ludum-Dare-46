@@ -238,7 +238,7 @@ public class DialogueManager : MonoBehaviour
         string[] line_params = line.Split(new char[] { ':' });
         string[] side_id = line_params[0].ToLower().Split(new char[] { ';' });
 
-        string text = line_params[1];
+        string text = line_params.Length > 1 ? line_params[1] : "";
         string char_id = side_id[0];
 
 

@@ -47,8 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   abilities:
-  - owner: {fileID: 0}
-    name: Heal
+  - name: Heal
     sprite_name: 
     from_positions: 00000000010000000200000003000000
     target_type: 1
@@ -70,8 +69,8 @@ MonoBehaviour:
   _max_ap: 1
   _icon_name: demon_wizard
   resources:
-    first: 3
-    second: 8
+    first: 8
+    second: 12
 --- !u!70 &741524822824428920
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

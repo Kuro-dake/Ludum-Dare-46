@@ -14,16 +14,13 @@ public class Actor : MonoBehaviour
             return GetComponent<Animator>();
         }
     }
-
+    bool _talking = false;
     
     public bool talking
     {
         set
         {
-            if (mouth != null)
-            {
-                mouth.SetBool("talking", value);
-            }
+            _talking = value;
         }
     }
     float current_rot = 0f;
@@ -31,6 +28,7 @@ public class Actor : MonoBehaviour
     float multiply_rot = 3f;
     float turn_takes = 3f;
     float turn_takes_inverse;
+    float flash_delay = 0f;
     private void Update()
     {
         transform.localRotation = Quaternion.LerpUnclamped(Quaternion.identity, Quaternion.Euler(Vector3.forward * multiply_rot), current_rot);
@@ -38,6 +36,16 @@ public class Actor : MonoBehaviour
         if(Mathf.Abs(current_rot) >= Mathf.Abs(target_rot) && Mathf.Sign(current_rot) == Mathf.Sign(target_rot))
         {
             target_rot *= -1;
+        }
+        if (_talking)
+        {
+            if((flash_delay -= Time.deltaTime) < 0f)
+            {
+                flash_delay = Random.Range(.2f, .35f);
+                Flash.DoFlash(gameObject, 2f, 1f);
+                GM.audio_manager.PlaySound("speech", .35f, new FloatRange(.5f, 1f));
+            }
+
         }
     }
     private void Start()
@@ -107,5 +115,10 @@ public class Actor : MonoBehaviour
         {
             gameObject.SetActive(false);
         }
+    }
+
+    private void OnEnable()
+    {
+        _talking = false;
     }
 }

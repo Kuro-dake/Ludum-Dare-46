@@ -1,5 +1,6 @@
-wizard;l:We've got company. |demon;r: Hand over the whelp humans! You have no business taking care of a demon.|rogue;l: Actually, we do. If my friend Sigil is right, and he usually is, 
-we can use him to close the rift you gentlemen came through.|demon;r:You're going to die!|gray;r:I can help! I can see their intentions. I'll tell you, so you may prepare for them.|none;:Hover over an enemy to see which position it's going to attack this turn. 
+wizard;l:We've got company. |demon;r: Hand over the whelp humans! You have no business with the child demon.|rogue;l: Actually, we do. If my friend Sigil is right, and he usually is, 
+we can use him to close the rift you gentlemen came through.|demon;r:You're going to die!|none;l|none;r:The little demon can see your enemies intentions, and he can telepathically communicate the with the 
+rest of the party, so you can stay one step ahead.|none;:Hover over an enemy to see which position it's going to attack this turn. 
 If you want to avoid that attack with a particular character, 
 switch your party members amongst themselves.|none;:Remember - If any of the brothers should fall, 
 they will be resurrected by Sigil at the end of the battle, 

@@ -1,0 +1,4 @@
+general;r:Ah...The traitor to it's kind arrives.|gray;l:I...|general;r:So young and yet so guilty. You are
+going to die with the human scum, and then the rest of this world will follow you|rogue;l:Keep your ramblings to yourself demon. The propecy said nothing
+about the portal staying open. You die tonight, and hell stays in hell.|wizard;l:Onward, Brothers! Tonight we face our doom!|warrior;l:Leave no muscle untorn! Leve no skull unsplit!
+Abuse every last ounce of power you have left! You will never need again!|warrior;l:Charge!

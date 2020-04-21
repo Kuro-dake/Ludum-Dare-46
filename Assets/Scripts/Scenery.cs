@@ -100,30 +100,39 @@ public class Scenery : MonoBehaviour
 
     IEnumerator PlayXTag(string xtag)
     {
-        string[] batch = xtag.Split(new char[] { '|' });
-        foreach (string xt in batch)
-        {
-            Debug.Log(xt);
-            string[] pars = xt.Split(new char[] { ':' });
-            pars[1] = pars[1].Trim();
-            switch (pars[0])
+        
+            string[] batch = xtag.Split(new char[] { '|' });
+            foreach (string xt in batch)
             {
-                case "encounter":
-                    yield return GM.characters.CreateEncounterFromString(pars[1]);
-                    break;
-                case "dialogue":
-                    yield return GM.cinema.PlayDialogue(pars[1]);
-                    break;
-                case "env":
-                    GM.level_manager.SpawnObject(pars[1]);
-                    break;
-                default:
-                    throw new UnityException("Unknown tag " + pars[0]);
-                    
+                Debug.Log(xt);
+                string[] pars = xt.Split(new char[] { ':' });
+                if(pars.Length < 2)
+            {
+                Debug.Log(xtag);
             }
-        }
+                pars[1] = pars[1].Trim();
+                switch (pars[0])
+                {
+                    case "encounter":
+                        yield return GM.characters.CreateEncounterFromString(pars[1]);
+                        break;
+                    case "dialogue":
+                        yield return GM.cinema.PlayDialogue(pars[1]);
+                        break;
+                    case "env":
+                        GM.level_manager.SpawnObject(pars[1]);
+                        break;
+                    case "ending":
+                        GM.ui.GameOver(true);
+                        break;
+                    default:
+                        throw new UnityException("Unknown tag " + pars[0]);
 
-        Debug.Log("Finished xtag");
+                }
+            }
+
+            Debug.Log("Finished xtag");
+        
     }
     
     void LateUpdate()

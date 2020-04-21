@@ -210,13 +210,16 @@ public class CharacterManager : MonoBehaviour
     }
     [TextArea(10,15)]
     public string randomCombinations;
-    public int current_x = 300;
+    public int current_x = 600;
     public int end_x = 5500;
-    public IntRange gaps = new IntRange(50, 150);
+    public IntRange gaps = new IntRange(50, 100);
     void doRandomCombinations()
     {
-        
-        string[] possible_units = new string[] { "goblin1", "goblin2" };
+
+        //string[] possible_units = new string[] { "goblin1", "goblin2", "impaler1","wizard1","slinger","thrower","crusader","doomsayer" };
+        //string[] possible_units = new string[] { "goblin2", "impaler1","slinger" };
+        //string[] possible_units = new string[] { "impaler1", "wizard1", "slinger", "thrower"};
+        string[] possible_units = new string[] { "thrower", "crusader", "doomsayer" };
         randomCombinations = "";
         bool first = true;
         while((current_x += gaps.random) < end_x)

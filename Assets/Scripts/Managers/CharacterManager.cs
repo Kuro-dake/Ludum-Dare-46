@@ -58,7 +58,7 @@ public class CharacterManager : MonoBehaviour
     public ClusterTypes clusters;
     #endregion
     [SerializeField]
-    EnemyParty enemy_party_prefab = null;
+    public EnemyParty enemy_party_prefab = null;
     public void SetCurrentCharacter(Character c) {
         if(GM.game.phase != game_phase.movement)
         {
@@ -143,7 +143,7 @@ public class CharacterManager : MonoBehaviour
     {
         _all_characters.Remove(c);
     }
-    Enemy GetEnemy(string n)
+    public Enemy GetEnemyPrefab(string n)
     {
         return enemy_data.Find(delegate (EnemyData e)
         {
@@ -155,7 +155,7 @@ public class CharacterManager : MonoBehaviour
         EnemyParty ep = Instantiate(enemy_party_prefab);
         int i = 0;
         foreach(string s in pars.Split(new char[] { ';' })){ 
-            Enemy e = Instantiate(GetEnemy(s));
+            Enemy e = Instantiate(GetEnemyPrefab(s));
             e.gameObject.name = e.gameObject.name.Replace("(Clone)", "");
             e.position = i++;
             e.transform.SetParent(ep.members.transform);
@@ -171,6 +171,8 @@ public class CharacterManager : MonoBehaviour
         
     }
    
+   
+
     public void KillAll()
     {
         all_characters.ForEach(delegate (Character obj)
@@ -245,12 +247,9 @@ public class CharacterManager : MonoBehaviour
     public void Initialize()
     {
         doRandomCombinations();
-        current_round_character_index = 5;
+        current_round_character_index = 0;
         RefreshCurrentCharacterMarker();
-        if (speedup_wizard_dev)
-        {
-            GM.party["Wizard"].initiative = 10;
-        }
+        
     }
 
     public void NewTurn()
@@ -295,7 +294,7 @@ public class CharacterManager : MonoBehaviour
 
     public bool show_enemy_targets = false;
 
-    private void RefreshCurrentCharacterMarker()
+    public void RefreshCurrentCharacterMarker()
     {
         dev_turn_marker.track = current_round_character.transform;
         dev_turn_marker.offset = new Vector2(.2f, .6f);

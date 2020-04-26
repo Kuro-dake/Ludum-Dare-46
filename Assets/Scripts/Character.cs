@@ -3,25 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
+using YamlDotNet.RepresentationModel;
 public abstract class Character : MonoBehaviour
 {
-
-    public void ModifyStat(string stat_name, int value)
-    {
-        switch (stat_name)
-        {
-            case "maxhp":
-                max_hp += value;
-                break;
-            case "defense":
-                _defense += value;
-                break;
-            case "initiative":
-                initiative += value;
-                break;
-        }
-    }
 
     public Color color { get { return GetComponent<SpriteRenderer>().color; } }
     [SerializeField]
@@ -183,7 +167,8 @@ public abstract class Character : MonoBehaviour
     }
     protected virtual void ReceiveDamage(int damage)
     {
-        damage -= defense;
+        damage = Mathf.Clamp(damage - defense, 0, int.MaxValue);
+
         hp -= damage;
     }
     public virtual void Hit(int damage)
@@ -210,12 +195,16 @@ public abstract class Character : MonoBehaviour
             throw new UnityException("Character " + name + " wasn't initialized!");
         }
     }
+    public CharacterControl control
+    {
+        get { return GetComponent<CharacterControl>(); }
+    }
     public virtual Coroutine StartRound()
     {
-        has_finished_acting = false;
+        control.has_finished_acting = false;
         ap = max_ap;
 
-        return null;
+        return control.StartRound();
     }
     public virtual void EndRound()
     {
@@ -238,11 +227,11 @@ public abstract class Character : MonoBehaviour
     }
     public virtual void StartTurn() { }
     public bool has_actions_left { get { return ap > 0; } }
-    public bool has_finished_acting = false;
+    
     [SerializeField]
     int _max_ap = 1;
     public int max_ap { get { return _max_ap + GetBuffsValue(buff_type.actions); } }
-    protected int ap;
+    public int ap { get; protected set; }
     public bool SpendAP(int amount = 1)
     {
         if (ap >= amount)
@@ -250,7 +239,7 @@ public abstract class Character : MonoBehaviour
             ap -= amount;
             if(ap == 0)
             {
-                has_finished_acting = true;
+                control.has_finished_acting = true;
             }
             return true;
         }
@@ -355,6 +344,101 @@ public abstract class Character : MonoBehaviour
         abilities = new List<Ability>(savedCharacter.abilities);
     }
 
+    public void SetCharacterFromYAMLNode(YamlMappingNode node)
+    {
+        bool clear_abilities = true;
+
+        try
+        {
+            clear_abilities = node.GetBool("clear_abilities");
+        }
+        catch (KeyNotFoundException) { }
+
+        YamlMappingNode stats_node = null;
+        try
+        {
+            stats_node = node.GetNode<YamlMappingNode>("stats");
+        }
+        catch (KeyNotFoundException e)
+        {
+            Debug.Log("No global stats provided");
+        }
+        if (stats_node != null)
+        {
+            foreach (KeyValuePair<YamlNode, YamlNode> stat in stats_node.Children)
+            {
+                ModifyStat(stat.Key.ToString(), int.Parse(stat.Value.ToString()), true);
+            }
+            if (clear_abilities)
+            {
+                abilities.Clear();
+            }
+        }
+        
+        YamlMappingNode abilities_node = null;
+        try
+        {
+            abilities_node = node.GetNode<YamlMappingNode>("abilities");
+        }
+        catch (KeyNotFoundException e)
+        {
+            Debug.Log("No global abilities provided");
+        }
+        if (abilities_node != null)
+        {
+            foreach (KeyValuePair<YamlNode, YamlNode> ability in abilities_node.Children)
+            {
+                Ability a = new Ability();
+                string a_name = ability.Key.ToString();
+                a.name = a_name;
+                foreach (KeyValuePair<YamlNode, YamlNode> stat in ((YamlMappingNode)ability.Value).Children)
+                {
+                    string stat_name = stat.Key.ToString();
+                    string stat_value = stat.Value.ToString();
+                    switch (stat_name)
+                    {
+                        case "ability_range":
+                            a.ability_range = (ability_range)Enum.Parse(typeof(ability_range), stat_value);
+                            break;
+                        case "target_type":
+                            a.target_type = (target_type)Enum.Parse(typeof(target_type), stat_value);
+                            break;
+                        case "sprite":
+                            a.sprite_name = stat_value;
+                            break;
+                        default:
+                            a.ModifiyStat(stat_name, int.Parse(stat_value), true);
+                            break;
+                    }
+
+                }
+                abilities.Add(a);
+            }
+        }
+
+
+    }
+
+    public void ModifyStat(string stat_name, int value, bool set = false)
+    {
+        switch (stat_name)
+        {
+            case "maxhp":
+                max_hp = (set ? 0 : max_hp) + value;
+                break;
+            case "defense":
+                _defense = (set ? 0 : _defense) + value;
+                break;
+            case "initiative":
+                initiative = (set ? 0 : initiative) + value;
+                break;
+            default:
+                throw new UnityException("Stat " + stat_name + " does not exist");
+                
+        }
+    }
+
+
     public Ability GetAbilityByName(string a_name)
     {
         return abilities.Find(delegate (Ability a)
@@ -401,5 +485,17 @@ public abstract class Character : MonoBehaviour
         {
             GM.audio_manager.PlaySound("step", 1f, new FloatRange(.3f, .4f));
         }
+    }
+
+    public Ability GetRandomAvailableAbility()
+    {
+        List<Ability> pick = character_abilities.FindAll(delegate (Ability a) {
+            return a.target_positions.Contains(position);
+        });
+        if (pick.Count == 0)
+        {
+            return null;
+        }
+        return character_abilities[UnityEngine.Random.Range(0, character_abilities.Count)];
     }
 }

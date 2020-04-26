@@ -142,7 +142,7 @@ public class GameManager : MonoBehaviour
     public Coroutine StartCombat(EnemyParty party)
     {
         current_enemy_party = party;
-        current_enemy_party.Initialize();
+        
         
         if(combat_routine != null)
         {
@@ -168,14 +168,17 @@ public class GameManager : MonoBehaviour
         Debug.Log("finished acting");
         acting_routine = null;
     }
-
-    IEnumerator CombatStep()
+    
+    protected virtual IEnumerator CombatStep()
     {
         GM.characters.NewTurn();
+        
         yield return GM.characters.NextCharacterTurn(true);
+    
         while (GM.characters.any_enemies_alive)
         {
-            while (!GM.characters.current_round_character.has_finished_acting || is_acting)
+
+            while (!GM.characters.current_round_character.control.has_finished_acting || is_acting)
             {
                 yield return null;
             }
@@ -210,6 +213,7 @@ public class GameManager : MonoBehaviour
             c.gameObject.AddComponent<Fader>().FadeIn();
         }
         GM.audio_manager.PlaySound("hit");
+        GM.characters.RefreshCurrentCharacterMarker();
 
     }
     public float combat_ended = 0f;

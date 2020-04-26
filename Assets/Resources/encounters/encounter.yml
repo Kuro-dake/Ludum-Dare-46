@@ -1,0 +1,12 @@
+enemies:
+	number: 4
+	stats:
+		hp:1
+		attack:1
+		defense:0
+
+party:
+	stats:
+		hp:2
+		attack:1
+		defense:0

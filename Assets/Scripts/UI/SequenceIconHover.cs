@@ -11,7 +11,7 @@ public class SequenceIconHover : MonoBehaviour, IPointerEnterHandler, IPointerEx
     {
         if (character is Enemy)
         {
-            (character as Enemy).DisplayNextTargets();
+            (character as Enemy).enemy_control.DisplayNextTargets();
         }
         SetMark(character);
     }

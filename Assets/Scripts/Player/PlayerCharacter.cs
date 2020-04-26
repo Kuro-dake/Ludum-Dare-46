@@ -18,7 +18,8 @@ public class PlayerCharacter : Character
                 switch_ability.owner = this;
                 switch_ability.sprite_name = "switch";
                 switch_ability.target_number = 1;
-                switch_ability.target_type = target_type.all;
+                switch_ability.ability_range = ability_range.global;
+                switch_ability.target_type = target_type.ally;
                 ret.Add(switch_ability);
                 if (!combat)
                 {
@@ -28,7 +29,8 @@ public class PlayerCharacter : Character
                     select_ability.owner = this;
                     select_ability.sprite_name = "arrow";
                     select_ability.target_number = 1;
-                    select_ability.target_type = target_type.all;
+                    select_ability.ability_range = ability_range.global;
+                    select_ability.target_type = target_type.ally;
                     ret.Add(select_ability);
                 }
             }
@@ -39,7 +41,7 @@ public class PlayerCharacter : Character
                 skip_ability.owner = this;
                 skip_ability.sprite_name = "skip";
                 skip_ability.target_number = 1;
-                skip_ability.target_type = target_type.all;
+                skip_ability.target_type = target_type.self;
                 ret.Add(skip_ability);
             }
             return ret;
@@ -48,7 +50,7 @@ public class PlayerCharacter : Character
     }
     public void SkipTurn()
     {
-        has_finished_acting = true;
+        control.has_finished_acting = true;
     }
     public override Coroutine StartRound()
     {
@@ -64,7 +66,7 @@ public class PlayerCharacter : Character
     IEnumerator SkipTurnStep()
     {
         yield return new WaitForSeconds(.5f);
-        has_finished_acting = true;
+        control.has_finished_acting = true;
     }
     
     public override void EndRound()
@@ -74,8 +76,15 @@ public class PlayerCharacter : Character
     }
     public override void Initialize()
     {
+        if(control == null)
+        {
+            gameObject.AddComponent<PlayerControl>();
+        }
         base.Initialize();
+
     }
+
+
 
     public override void Hit(int damage)
     {

@@ -5,57 +5,114 @@ using UnityEngine;
 [System.Serializable]
 public class Ability
 {
-    public void ModifiyStat(string stat_name, int value)
+    public void ModifiyStat(string stat_name, int value, bool set = false)
     {
         switch (stat_name)
         {
             case "damage":
-                damage += value;
+                damage = (set ? 0 : damage) + value;
                 break;
             case "heal":
-                heal += value;
+                heal = (set ? 0 : heal) + value;
                 break;
             case "target_number":
-                target_number += value;
+                target_number = (set ? 0 : target_number) + value;
                 break;
             case "buff":
-                buff.effects[0].second += value;
+                buff.effects[0].second = (set ? 0 : buff.effects[0].second) + value;
                 break;
         }
     }
+   
     [System.NonSerialized]
     public Character owner;
     [System.NonSerialized]
     public Color ability_color = Color.white;
     public string name;
     public string sprite_name;
-    public List<int> from_positions = new List<int>();
-    public List<int> from_positions_bypass
+
+    public ability_range ability_range;
+    public Party target_party
     {
         get
         {
-            return new List<int>() { 0, 1, 2, 3 };
+            switch (target_type)
+            {
+                case target_type.ally:
+                case target_type.self:
+                    return owner.party;
+                    
+                case target_type.enemy:
+                    return owner.opposing_party;
+
+                case target_type.all:
+                default:
+                    throw new System.NotImplementedException("Action for "+target_type.ToString()+" not implemented");
+            }
+        }
+    }
+    public static List<int> GetTargetPositionsByAbilityRange(ability_range range, target_type ttype, Party target_party, Character user)
+    {
+        if(ttype == target_type.self)
+        {
+            return new List<int>() { user.position };
+        }
+
+        int start = 0;
+        int end = target_party.members.members.Count - 1;
+
+        switch (range)
+        {
+            case ability_range.melee:
+                end = 1;
+                break;
+            case ability_range.ranged:
+                start = 1;
+                break;
+            case ability_range.global:
+                break;
+            case ability_range.backstab:
+                start = end;
+                break;
+        }
+        List<int> ret = new List<int>();
+        for (int i = start; i <= end; i++)
+        {
+            ret.Add(i);
+        }
+        return ret;
+    }
+    public List<int> target_positions
+    {
+        get
+        {
+            return GetTargetPositionsByAbilityRange(ability_range, target_type, target_party, owner);
         }
     }
     
     public target_type target_type;
     [SerializeField]
-    int damage = 1;
+    int damage = 0;
     public int GetDamage(List<Buff> buffs)
     {
         return damage + Buff.GetBuffsValue(buffs, buff_type.damage);
     }
-    public int heal = 1;
-    public List<int> target_positions = new List<int>();
+    public int heal = 0;
+    
     public int target_number = 1;
     public Buff buff;
-
+    public Ability()
+    {
+    }
     public Ability(System.Action a)
     {
         special_action = a;
         damage = 0;
         heal = 0;
     }
+
+    
+
     System.Action special_action = null;
     public List<int> GetTargetPositionsForAI()
     {
@@ -85,7 +142,7 @@ public class Ability
         if(special_action != null)
         {
             special_action();
-            owner.has_finished_acting = true;
+            owner.control.has_finished_acting = true;
             return;
         }
         foreach(int position in targets)
@@ -107,6 +164,7 @@ public class Ability
         if (target == null)
         {
             ret += "No target provided for " + name + " ability\n";
+            Debug.Log(ret);
             return;
         }
         if (!target.is_alive)
@@ -232,7 +290,8 @@ public class Ability
         ret.RemoveAll(delegate (Character c) { return c == null; });
         return ret;
     }
-    bool EvalRightPosition(int pos, List<int> positions, Party party) {
+    public static bool EvalRightPosition(int pos, List<int> positions, Party party) {
+        
         if (positions.Contains(pos))
         {
             return true;
@@ -242,7 +301,7 @@ public class Ability
     }
     public bool CanUseFromPosition(int pos)
     {
-        return EvalRightPosition(pos, from_positions_bypass, owner.party);
+        return EvalRightPosition(pos, target_positions, owner.party);
     }
 
     public bool CanUseAtPosition(int pos)
@@ -297,6 +356,13 @@ public struct Buff
     public bool is_inert { get { return effects == null || effects.Count == 0; } }
 
     public int lasts;
+}
+public enum ability_range
+{
+    melee,
+    backstab,
+    ranged,
+    global
 }
 public enum target_type
 {

@@ -97,6 +97,7 @@ public class PlayerParty : Party
     
     public override void Initialize()
     {
+        
         aim = new GameObject("aim").transform;
 
         SpriteRenderer sr = aim.gameObject.AddComponent<SpriteRenderer>();

@@ -158,7 +158,16 @@ public static class DataExtensions
     }
     public static YamlNode GetNode(this YamlMappingNode n, string what)
     {
-        return n.Children[new YamlScalarNode(what)];
+        YamlNode ret = null;
+        try
+        {
+            ret = n.Children[new YamlScalarNode(what)];
+        }
+        catch (KeyNotFoundException)
+        {
+            throw new KeyNotFoundException("Key '" + what + "' was not found");
+        }
+        return ret;
     }
     public static T GetNode<T>(this YamlMappingNode n, string what) where T : YamlNode
     {

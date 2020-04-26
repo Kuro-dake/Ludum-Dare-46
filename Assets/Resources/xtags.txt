@@ -64,4 +64,4 @@
 4284-encounter:doomsayer;thrower;thrower
 4387-encounter:crusader;crusader;crusader
 4462-encounter:doomsayer;thrower;crusader;doomsayer
-4580-encounter:thrower;doomsayer;crusader;crusader
+4580-dialogue:final_encounter|encounter:thrower;doomsayer;crusader;general|ending:ending

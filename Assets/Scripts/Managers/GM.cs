@@ -84,6 +84,10 @@ public class GM : MonoBehaviour
     CineCam _cine_cam;
     public static CineCam cine_cam { get { return _inst._cine_cam; } }
     [SerializeField]
+    EncounterGenerator _enc_gen;
+    public static EncounterGenerator enc_gen { get { return _inst._enc_gen; } }
+
+    [SerializeField]
     Sprite _square = null, _circle = null;
     [SerializeField]
     Music _music;
@@ -94,6 +98,10 @@ public class GM : MonoBehaviour
     public DevOptions _dev_options = new DevOptions();
     public static DevOptions dev_options { get { return inst._dev_options; } }
     bool initialized = false;
+    private void Start()
+    {
+        Initialize();
+    }
     public void Initialize(bool story_mode = false)
     {
         Debug.Log("Initializing GM");
@@ -111,24 +119,20 @@ public class GM : MonoBehaviour
 
         /*terrace.Initialize();
         terrace.from.VisitNode();*/
-        party.Initialize();
+        //party.Initialize();
         level_manager.GenerateLevel("World");
         game.current_scenery.Initialize();
         if (GM.scenery.x < 5f)
         {
-            cinema.PlayLevelString(0);
+            //cinema.PlayLevelString(0);
         }
-        characters.Initialize();
+
         //game.StartCombat(_enemy_party);
+        
+        enc_gen.GenerateEncounter();
+        characters.Initialize();
+        
         ui.Initialize();
-
-        if (story_mode)
-        {
-            Character wiz = GM.party["Wizard"];
-            wiz.GetAbilityByName("Lightning").ModifiyStat("damage", 30);
-            wiz.initiative = 10;
-        }
-
     }
 
    

@@ -6,6 +6,7 @@ using UnityEngine;
 public class Members : MonoBehaviour
 {
     protected virtual float[] positions { get { return new float[] { 8.7f, 2.9f, -2.9f, -8.7f }; } }
+    
     public List<Character> members
     {
         get
@@ -61,8 +62,9 @@ public class Members : MonoBehaviour
         foreach(Character c in gameObject.GetComponentsInChildren<Character>())
         {
             c.party = party;
-            c.GoToPosition();
             c.Initialize();
+            c.GoToPosition();
+            
         }
 
     }

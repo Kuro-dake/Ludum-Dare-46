@@ -9,6 +9,9 @@ public class PositionTracker : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = track.position + offset;
+        if (track != null)
+        {
+            transform.position = track.position + offset;
+        }
     }
 }

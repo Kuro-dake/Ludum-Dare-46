@@ -74,10 +74,34 @@ public class EncounterGenerator : MonoBehaviour
 
         SetSpecificData(enemy_data, ep);
 
+        Debug.Log("player party power: " + GetPartyPower(GM.party));
+        Debug.Log("enemy party power: " + GetPartyPower(ep));
+
         GM.game.StartCombat(ep);
 
     }
 
+    public int GetPartyPower(Party party)
+    {
+        int ret = 0;
+        foreach(Character c in party.members.members)
+        {
+            ret += c.max_hp;
+            int max_damage = 0;
+            foreach(Ability a in c.character_abilities)
+            {
+                int ca_damage = a.GetDamage(new List<Buff>());
+                ca_damage *= a.target_number;
+                if (ca_damage > max_damage)
+                {
+                    max_damage = ca_damage;
+                }
+            }
+            ret += max_damage;
+        }
+
+        return ret;
+    }
     
 }
 

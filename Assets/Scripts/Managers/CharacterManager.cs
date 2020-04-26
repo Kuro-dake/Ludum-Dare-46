@@ -210,43 +210,9 @@ public class CharacterManager : MonoBehaviour
         
         return chars;
     }
-    [TextArea(10,15)]
-    public string randomCombinations;
-    public int current_x = 600;
-    public int end_x = 5500;
-    public IntRange gaps = new IntRange(50, 100);
-    void doRandomCombinations()
-    {
-
-        //string[] possible_units = new string[] { "goblin1", "goblin2", "impaler1","wizard1","slinger","thrower","crusader","doomsayer" };
-        //string[] possible_units = new string[] { "goblin2", "impaler1","slinger" };
-        //string[] possible_units = new string[] { "impaler1", "wizard1", "slinger", "thrower"};
-        string[] possible_units = new string[] { "thrower", "crusader", "doomsayer" };
-        randomCombinations = "";
-        bool first = true;
-        while((current_x += gaps.random) < end_x)
-        {
-            if (first)
-            {
-                first = false;
-            }
-            else
-            {
-                randomCombinations += "\n";
-            }
-            int num = Random.Range(0, 2) == 1 ? Random.Range(2,5) : 4;
-            randomCombinations += current_x.ToString() + "-encounter:";
-            for (int i = 0; i < num; i++)
-            {
-                randomCombinations += possible_units[Random.Range(0, possible_units.Length)] + (i < num-1 ? ";":"");
-            }
-        }
-
-
-    }
+    
     public void Initialize()
     {
-        doRandomCombinations();
         current_round_character_index = 0;
         RefreshCurrentCharacterMarker();
         

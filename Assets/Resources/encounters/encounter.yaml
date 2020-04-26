@@ -1,43 +1,82 @@
 enemies:
- number: 4
- stats:
-  maxhp: 1
-  defense: 0
- abilities:
-  "Push the bitch out":
-   damage: 2
-   ability_range: melee
-   target_type: enemy
-   target_number: 1
- specs:
-  "Mother Teresa":
-   clear_abilities: true
-   position: 1
-   stats:
-    maxhp: 10
-    initiative: 0
-    defense: 0
-   abilities: 
-    "OD":
-     damage: 3
-     ability_range: global
-     target_type: self
-     target_number: 1
+    number: 4
+    stats:
+        maxhp: 1
+        defense: 0
+    abilities:
+        "Push the bitch   out":
+            damage: 2
+            ability_range:  melee
+            target_type: enemy
+            target_number:  1
+    specs:
+        "Mother   Teresa":
+            clear_abilities: true
+            position: 1
+            stats:
+                maxhp: 10
+                initiative: 0
+                defense: 0
+            abilities:  
+                "OD":
+                    damage: 3
+                    ability_range: global
+                    target_type: self
+                    target_number: 1
 
 
 
 player:
- stats:
-  maxhp: 2
-  defense: 0
- specs:
-  "Wizard":
-   maxhp: 5
-   defense: 0
-   abilities:
-    "Lightning":
-     damage: 2
-     target_number: 4
-     target_type: enemy
-     ability_range: global
-     sprite: "lightning"
+    stats:
+        maxhp: 2
+        defense: 0
+    specs:
+        "Wizard":
+            stats:
+                maxhp: 5
+                defense: 0
+            abilities:
+                "Lightning":
+                    damage: 2
+                    target_number: 4
+                    target_type: enemy
+                    ability_range: global
+                    sprite: "lightning"
+        "Warrior":
+            stats:
+                maxhp: 10
+                defense: 0
+            abilities:
+                "Block":
+                    damage: 0
+                    target_number: 1
+                    target_type: self
+                    ability_range: global
+                    sprite: "block"
+                    buff_lasts: 2
+                    buff:
+                       - type: defense
+                         value: 5
+                       - type: damage
+                         value: -2
+                "Slash":
+                    damage: 5
+                    target_number: 1
+                    target_type: enemy
+                    ability_range: melee
+                    sprite: "slash"
+        "Gray":
+            stats:
+                maxhp: 6
+
+
+
+
+
+
+
+
+
+
+
+

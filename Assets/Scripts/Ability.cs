@@ -18,12 +18,42 @@ public class Ability
             case "target_number":
                 target_number = (set ? 0 : target_number) + value;
                 break;
-            case "buff":
-                buff.effects[0].second = (set ? 0 : buff.effects[0].second) + value;
+            case "buff_lasts":
+                buff.lasts = (set ? 0 : buff.lasts) + value;
                 break;
         }
     }
-   
+
+    public void ModifyBuff(buff_type buff_type, int value, bool set = false)
+    {
+        NamedBuffEffect nbe = null;
+        if (buff.effects != null)
+        {
+            nbe = buff.effects.Find(delegate (NamedBuffEffect n)
+            {
+                return n.first == buff_type;
+            });
+        }
+        else
+        {
+            buff.effects = new List<NamedBuffEffect>();
+        }
+        if (nbe == null) { 
+            if (!set)
+            {
+                throw new UnityException("Trying to modify an non-existent buff effect of type " + buff_type.ToString());
+            }
+            else
+            {
+                nbe = new NamedBuffEffect(buff_type, 0);
+                buff.effects.Add(nbe);
+            }
+        }
+
+        nbe.second = (set ? 0 : nbe.second) + value;
+        
+    }
+
     [System.NonSerialized]
     public Character owner;
     [System.NonSerialized]
@@ -195,6 +225,15 @@ public class Ability
         
 
     }
+    string BuffDescription(NamedBuffEffect nbe)
+    {
+        return 
+            "gives " 
+            + (nbe.second >= 0 ? "+" : "") 
+            + nbe.second + " " 
+            + nbe.first.ToString() 
+            + (nbe.second >= 0 ? " boost" : " penalty");
+    }
     public override string ToString()
     {
         string ret = "";
@@ -214,8 +253,20 @@ public class Ability
         }
         if (!buff.is_inert)
         {
-            NamedBuffEffect nbe = buff.effects[0];
-            ret += (ret.Length > 0 ? " and " : "") + " gives + "+ nbe.second + " " + nbe.first.ToString() + " boost";
+
+            ret += (ret.Length > 0 ? " and" : "");
+            if (buff.effects.Count == 1)
+            {
+                ret += BuffDescription(buff.effects[0]);
+            }
+            else
+            {
+                int i = 0;
+                foreach(NamedBuffEffect nbe in buff.effects)
+                {
+                    ret += "- " + BuffDescription(nbe) + (i != buff.effects.Count - 1 ? "\n" : "");
+                }
+            }
         }
         string singular = "target";
         string plural = "targets";

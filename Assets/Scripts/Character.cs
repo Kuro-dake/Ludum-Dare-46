@@ -22,14 +22,14 @@ public abstract class Character : MonoBehaviour
     public int initiative;
     [SerializeField]
     List<Ability> abilities = new List<Ability>();
-    protected List<Ability> character_abilities
+    public List<Ability> character_abilities
     {
         get
         {
             abilities.ForEach(delegate (Ability a) {
                 a.owner = this;
             });
-            return abilities;
+            return new List<Ability>(abilities);
         }
     }
 
@@ -361,7 +361,7 @@ public abstract class Character : MonoBehaviour
         }
         catch (KeyNotFoundException e)
         {
-            Debug.Log("No global stats provided");
+         
         }
         if (stats_node != null)
         {
@@ -382,7 +382,7 @@ public abstract class Character : MonoBehaviour
         }
         catch (KeyNotFoundException e)
         {
-            Debug.Log("No global abilities provided");
+
         }
         if (abilities_node != null)
         {
@@ -405,6 +405,15 @@ public abstract class Character : MonoBehaviour
                             break;
                         case "sprite":
                             a.sprite_name = stat_value;
+                            break;
+                        case "buff":
+                            foreach(YamlMappingNode buff_data in (YamlSequenceNode)stat.Value)
+                            {
+                                buff_type type = (buff_type)Enum.Parse(typeof(buff_type), buff_data.Get("type"));
+                                int value = buff_data.GetInt("value");
+                                a.ModifyBuff(type, value,  true);
+                                
+                            }
                             break;
                         default:
                             a.ModifiyStat(stat_name, int.Parse(stat_value), true);
@@ -449,8 +458,9 @@ public abstract class Character : MonoBehaviour
 
     public override string ToString()
     {
-        string ret = "<b>{0}</b>\n{1}/{2} HP\n{3} initiative\n{4} defense";
-        ret = string.Format(ret, display_name, hp,max_hp, initiative, defense);
+        string ret = "<b>{0}</b>\n{1}/{2} HP\n{5} damage bonus\n{4} defense\n{3} initiative";
+        int damage = Buff.GetBuffsValue(buffs, buff_type.damage);
+        ret = string.Format(ret, display_name, hp,max_hp, initiative, defense, (damage >= 0 ? "+" : "") + damage.ToString());
         if(character_abilities.Count > 0)
         {
             ret += "\n\n <b>Abilities:</b>";

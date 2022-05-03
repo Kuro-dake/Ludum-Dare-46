@@ -40,6 +40,7 @@ public class EncounterGenerator : MonoBehaviour
 
     public void GenerateEncounter()
     {
+
         YamlMappingNode encounter = Setup.GetFile("encounters/encounter");
 
 
@@ -78,12 +79,14 @@ public class EncounterGenerator : MonoBehaviour
         Debug.Log("enemy party power: " + GetPartyPower(ep));
 
         GM.game.StartCombat(ep);
-
+        GM.game.combat_camera_target.transform.position = Vector2.Lerp(GM.party.transform.position, GM.game.current_enemy_party.transform.position, .5f);
+        GM.cine_cam.target = GM.game.combat_camera_target;
     }
 
     public int GetPartyPower(Party party)
     {
         int ret = 0;
+
         foreach(Character c in party.members.members)
         {
             ret += c.max_hp;

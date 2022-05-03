@@ -10,6 +10,7 @@ public abstract class Character : MonoBehaviour
     public Color color { get { return GetComponent<SpriteRenderer>().color; } }
     [SerializeField]
     protected int _hp = 1;
+    public Character current_ability_target = null;
     public int hp { get { return _hp; } protected set { _hp = value; } }
     public int max_hp;
     [SerializeField]
@@ -261,17 +262,25 @@ public abstract class Character : MonoBehaviour
    
     protected virtual void OnMouseExit()
     {
-        GM.ui.HideAbilityButtons(this);
+        //GM.ui.HideAbilityButtons(this);
         GM.ui.info_panel.HideCharacterDescription(this);
     }
     protected virtual void OnMouseOver()
     {
         if (GM.can_show_ability_buttons && is_alive)
         {
-            GM.ui.ShowAbilityButtons(this);
+            //GM.ui.ShowAbilityButtons(this);
             GM.ui.info_panel.ShowCharacterDescription(this);
             
         }
+    }
+    protected virtual void OnMouseDown()
+    {
+        GM.ui.MouseDown(this);
+    }
+    protected virtual void OnMouseUp()
+    {
+        GM.ui.MouseUp(this);
     }
     protected target_type GetTargetType(Character c)
     {

@@ -5,7 +5,21 @@ using UnityEngine;
 
 public class Members : MonoBehaviour
 {
-    protected virtual float[] positions { get { return new float[] { 8.7f, 2.9f, -2.9f, -8.7f }; } }
+    protected virtual float[] positions { 
+        get {
+            float margin = 22.4f / members.Count;
+            int numpos = members.Count;
+            float start = margin * (numpos - 1) / 2f;
+            List<float> ret = new List<float>();
+            for(int i = 0; i < numpos; i++)
+            {
+                ret.Add(start - margin * i);
+                Debug.Log(start - margin * i);
+            }
+            return ret.ToArray();
+            //return new float[] { 8.7f, 2.9f, -2.9f, -8.7f }; 
+        } 
+    }
     
     public List<Character> members
     {

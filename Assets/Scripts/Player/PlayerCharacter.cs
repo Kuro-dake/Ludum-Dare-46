@@ -4,6 +4,65 @@ using UnityEngine;
 
 public class PlayerCharacter : Character
 {
+    #region Special Abilities
+    Ability _switch_ability = null;
+    Ability switch_ability
+    {
+        get
+        {
+            if (_switch_ability == null)
+            {
+                _switch_ability = new Ability(delegate { SwitchPositions(current_ability_target); });
+                _switch_ability.name = "Switch positions with another party member";
+                _switch_ability.owner = this;
+                _switch_ability.sprite_name = "switch";
+                _switch_ability.target_number = 1;
+                _switch_ability.ability_range = ability_range.global;
+                _switch_ability.target_type = target_type.ally;
+            }
+            return _switch_ability;
+        }
+    }
+    Ability _select_ability = null;
+    Ability select_ability
+    {
+        get
+        {
+            if (_select_ability == null)
+            {
+                _select_ability = new Ability(delegate { GM.characters.SetCurrentCharacter(current_ability_target); });
+                _select_ability.name = "Set active character to another party member";
+                //ColorUtility.TryParseHtmlString("#A7FFA7", out _select_ability.ability_color);
+                _select_ability.owner = this;
+                _select_ability.sprite_name = "arrow";
+                _select_ability.target_number = 1;
+                _select_ability.ability_range = ability_range.global;
+                _select_ability.target_type = target_type.ally;
+            }
+            return _select_ability;
+        }
+    }
+    Ability _skip_ability = null;
+    Ability skip_ability
+    {
+        get
+        {
+            if (_skip_ability == null)
+            {
+                _skip_ability = new Ability(delegate { SkipTurn(); });
+                _skip_ability.name = "Skip turn";
+                _skip_ability.owner = this;
+                _skip_ability.sprite_name = "skip";
+                _skip_ability.target_number = 1;
+                _skip_ability.target_type = target_type.self;
+            }
+
+            return _skip_ability;
+        }
+        
+    }
+
+    #endregion
     public override List<Ability> GetAvailableAbilitiesFor(Character c)
     {
         bool combat = GM.game.phase != game_phase.movement;
@@ -13,35 +72,16 @@ public class PlayerCharacter : Character
         {
             if (target_type.ally == type)
             {
-                Ability switch_ability = new Ability(delegate { SwitchPositions(c); });
-                switch_ability.name = "Switch positions with " + c.name;
-                switch_ability.owner = this;
-                switch_ability.sprite_name = "switch";
-                switch_ability.target_number = 1;
-                switch_ability.ability_range = ability_range.global;
-                switch_ability.target_type = target_type.ally;
+                
                 ret.Add(switch_ability);
                 if (!combat)
                 {
-                    Ability select_ability = new Ability(delegate { GM.characters.SetCurrentCharacter(c); });
-                    select_ability.name = "Set active character to " + c.name;
-                    //ColorUtility.TryParseHtmlString("#A7FFA7", out select_ability.ability_color);
-                    select_ability.owner = this;
-                    select_ability.sprite_name = "arrow";
-                    select_ability.target_number = 1;
-                    select_ability.ability_range = ability_range.global;
-                    select_ability.target_type = target_type.ally;
+                    
                     ret.Add(select_ability);
                 }
             }
             if(target_type.self == type && combat)
-            {
-                Ability skip_ability = new Ability(delegate { SkipTurn(); });
-                skip_ability.name = "Skip turn";
-                skip_ability.owner = this;
-                skip_ability.sprite_name = "skip";
-                skip_ability.target_number = 1;
-                skip_ability.target_type = target_type.self;
+            {   
                 ret.Add(skip_ability);
             }
             return ret;
@@ -52,17 +92,29 @@ public class PlayerCharacter : Character
     {
         control.has_finished_acting = true;
     }
+    public List<Ability> currently_usable_abilities
+    {
+        get
+        {
+            List<Ability> ret = new List<Ability>();
+            bool combat = GM.game.phase != game_phase.movement;
+
+            if (combat)
+            {
+                ret.AddRange(character_abilities);
+            }
+            ret.Add(switch_ability);
+            ret.Add(skip_ability);
+
+            return ret;
+        }
+    }
     public override Coroutine StartRound()
     {
-        if(character_abilities.Count == 0)
-        {
-            Debug.Log(name + " skips the turn bacause he has no actions to perform.");
-            StartCoroutine(SkipTurnStep());
-        }
-        GM.ui.ShowGlobalAbilityButtons(character_abilities);
+        GM.ui.ShowGlobalAbilityButtons(currently_usable_abilities);
         return base.StartRound();
     }
-
+    
     IEnumerator SkipTurnStep()
     {
         yield return new WaitForSeconds(.5f);

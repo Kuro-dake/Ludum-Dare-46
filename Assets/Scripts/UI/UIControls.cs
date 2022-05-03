@@ -24,6 +24,8 @@ public class UIControls : MonoBehaviour
     Canvas canvas { get { return GetComponent<Canvas>(); } }
     [SerializeField]
     Transform ability_buttons, global_ability_buttons, sequence_display, shop_display, shop_display_buttons;
+    [SerializeField]
+    GameObject char_panel_prefab;
     Vector2 GetCharacterCanvasPosition(Character target)
     {
         Vector2 offsetPos = target.transform.position + Vector3.up * 1.5f;
@@ -105,22 +107,51 @@ public class UIControls : MonoBehaviour
     { 
         global_ability_buttons.DestroyChildren();
     }
+    Ability picked_ability;
+    Character ability_target;
+    public void MouseDown(Character c)
+    {
+        ability_target = c;
+    }
+    public Character MouseUp(Character c)
+    {
+        if(ability_target == c && picked_ability != null && GM.characters.current_round_character is PlayerCharacter && picked_ability.CanUseAtPosition(c.position))
+        {
+            GM.characters.current_round_character.current_ability_target = c;
+            picked_ability.ApplyAbility(c);
+            ClearPickedAbility();
+            return c;
+        }
+        return null;
+    }
+    void ClearPickedAbility()
+    {
+        ability_target = null;
+        picked_ability = null;
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            ClearPickedAbility();
+            if(GM.characters.current_round_character is PlayerCharacter)
+            {
+                ShowGlobalAbilityButtons((GM.characters.current_round_character as PlayerCharacter).currently_usable_abilities);
+            }
+        }
+    }
     public void ShowGlobalAbilityButtons(List<Ability> abilities)
     {
-
 
         int i = 0;
         float step = 65f;
         float start = step * (abilities.Count - 1) * -.5f;
 
-
-
-
         foreach (Ability a in abilities)
         {
             if (a.target_number < 2 && (a.target_type == target_type.enemy || a.target_type == target_type.ally || a.target_type == target_type.self))
             {
-                continue;
+                //continue;
             }
             Button b = Instantiate(button_prefab);
             b.transform.SetParent(global_ability_buttons);
@@ -128,13 +159,20 @@ public class UIControls : MonoBehaviour
             rt.anchorMax = Vector2.up;
             rt.anchorMin = Vector2.up;
             rt.pivot = Vector2.up;
-                rt.localPosition = (Vector2.right * (i++ * step + start) + Vector2.up * 85f);// + Vector2.up * 35;
+            rt.localPosition = (Vector2.right * (i++ * step + start) + Vector2.up * 85f);// + Vector2.up * 35;
 
             b.GetComponent<ButtonDescription>().description = a.ToString();
             b.transform.Find("Image").GetComponent<Image>().sprite = GetIcon(a.sprite_name);
             b.onClick.AddListener(delegate {
-                a.ApplyAbility();
+                if(a.target_number < 2 && a.target_type != target_type.self) {
+                    picked_ability = a;
+                }
+                else
+                {
+                    a.ApplyAbility();
+                }
                 HideGlobalAbilityButtons();
+
             });
             b.gameObject.AddComponent<SkillButtonHover>().ability = a;
         }

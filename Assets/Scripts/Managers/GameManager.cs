@@ -108,7 +108,7 @@ public class GameManager : MonoBehaviour
     public YAMLParams level_gen_params;
 
     [SerializeField]
-    Transform combat_camera_target;
+    public Transform combat_camera_target;
     public Character current_round_character
     {
         get
@@ -199,17 +199,24 @@ public class GameManager : MonoBehaviour
         combat_ended = Time.time;
         combat_routine = null;
 
+        while(!(GM.characters.current_round_character is PlayerCharacter))
+        {
+            GM.characters.NextCharacterTurn();
+            yield return null;
+        }
         
         foreach(Character c in GM.party.members.members)
         {
-            if(c.name == "Wizard")
+            c.Heal(100);
+            if (c.name == "Wizard")
             {
+                Flash.DoFlash(c.gameObject);
                 continue;
             }
-            Flash.DoFlash(c.gameObject);
+            
             c.Shake();
 
-            c.Heal(100);
+            
             c.gameObject.AddComponent<Fader>().FadeIn();
         }
         GM.audio_manager.PlaySound("hit");

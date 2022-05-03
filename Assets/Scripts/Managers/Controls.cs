@@ -21,6 +21,8 @@ public class Controls : MonoBehaviour
 
     void Update()
     {
+        GM.cine_cam.screenX = .5f;
+        GM.cine_cam.screenY = .65f;
         if (GM.cinema.active)
         {
             return;
@@ -35,8 +37,7 @@ public class Controls : MonoBehaviour
         if (Input.mouseScrollDelta.y > 0f) {  }
         else if (Input.mouseScrollDelta.y < 0f) {  }
 
-        GM.cine_cam.screenX = .5f;
-        GM.cine_cam.screenY = .65f;
+        
         
         if (GM.game.phase == game_phase.movement)
         {

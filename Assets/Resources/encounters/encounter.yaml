@@ -4,13 +4,13 @@ enemies:
         maxhp: 1
         defense: 0
     abilities:
-        "Push the bitch   out":
-            damage: 2
-            ability_range:  melee
+        "Slash":
+            damage: 3
+            ability_range:  ranged
             target_type: enemy
             target_number:  1
     specs:
-        "Mother   Teresa":
+        "Demon father":
             clear_abilities: true
             position: 1
             stats:
@@ -18,7 +18,7 @@ enemies:
                 initiative: 0
                 defense: 0
             abilities:  
-                "OD":
+                "Attack":
                     damage: 3
                     ability_range: global
                     target_type: self
@@ -28,7 +28,7 @@ enemies:
 
 player:
     stats:
-        maxhp: 2
+        maxhp: 6
         defense: 0
     specs:
         "Wizard":
@@ -38,7 +38,7 @@ player:
             abilities:
                 "Lightning":
                     damage: 2
-                    target_number: 4
+                    target_number: 2
                     target_type: enemy
                     ability_range: global
                     sprite: "lightning"
@@ -68,6 +68,16 @@ player:
         "Gray":
             stats:
                 maxhp: 6
+        "Ranger":
+            stats:
+                maxhp: 7
+                initiative: 4
+            abilities:
+                "Knife throw":
+                    damage: 2
+                    ability_range: ranged
+                    target_number: 1
+                    sprite: "throw_knife"
 
 
 
